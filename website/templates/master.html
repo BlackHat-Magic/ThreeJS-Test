@@ -14,8 +14,9 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">	
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-	<script src="{{ url_for('static', filename='js/master.js') }}">console.log("Hello world!")</script>
+	<script src="{{ url_for('static', filename='js/master.js') }}"></script>
 	<title>{{ title }} | Three.js test</title>
+	<base href=".">
 	{% block head %}{% endblock %}
 </head>
 
