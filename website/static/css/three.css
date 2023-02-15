@@ -1,0 +1,12 @@
+section.left {
+    grid-column: 1 / span 6;
+}
+section.right {
+    grid-column: 7 / span 6
+}
+
+@media only screen and (max-width: 900px) {
+    section.left, section.right {
+        grid-column: 1 / span 12;
+    }
+}

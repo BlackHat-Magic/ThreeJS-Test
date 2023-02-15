@@ -128,6 +128,20 @@ function orbitalPosition (frame, orbitperiod, parent, radius) {
     return([posx, posz]);
 }
 
+function moveCamera () {
+    let hermes = document.querySelector("#mercury").getBoundingClientRect().top;
+    let aphrodite = document.querySelector("#venus").getBoundingClientRect().top;
+    let gaia = document.querySelector("#earth").getBoundingClientRect().top;
+    let ares = document.querySelector("#mars").getBoundingClientRect().top;
+    let zeus = document.querySelector("#jupiter").getBoundingClientRect().top;
+    let cronus = document.querySelector("#saturn").getBoundingClientRect().top;
+    let caelus = document.querySelector("#uranus").getBoundingClientRect().top;
+    let poseidon = document.querySelector("#neptune").getBoundingClientRect().top;
+    let demeter = document.querySelector("#ceres").getBoundingClientRect().top;
+    let discordia = document.querySelector("#eris").getBoundingClientRect().top;
+    let hades = document.querySelector("#pluto").getBoundingClientRect().top;
+}
+
 function animate () {
     requestAnimationFrame(animate);
 
@@ -176,3 +190,4 @@ function animate () {
 }
 
 animate();
+document.body.onscroll = moveCamera
