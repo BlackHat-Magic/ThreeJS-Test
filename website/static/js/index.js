@@ -9,21 +9,32 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(30);
+camera.position.setX(100);
+camera.position.setY(100);
+camera.position.setZ(200);
 renderer.render(scene, camera);
 
-const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
-const material = new THREE.MeshBasicMaterial({color:0xFF6347, wireframe: true});
-const torus = new THREE.Mesh(geometry, material);
+const skyboxtexture = new THREE.TextureLoader().load('/static/img/8k_stars.jpg');
+scene.background = skyboxtexture;
 
-scene.add(torus);
+const sungeometry = new THREE.SphereGeometry(22.70340, 64, 32)
+const suntexture = new THREE.TextureLoader().load("/static/img/2k_sun.jpg")
+const sunmaterial = new THREE.MeshBasicMaterial({map: suntexture})
+const sun = new THREE.Mesh(sungeometry, sunmaterial)
+
+const ambientlight = new THREE.AmbientLight(0xFFEEEE)
+
+const light = new THREE.PointLight(0xFFEEEE, 1, 100);
+light.position.set(1, 1, 1);
+
+//scene.add(ambientlight);
+scene.add(light);
+scene.add(sun);
 
 function animate () {
     requestAnimationFrame(animate);
 
-    torus.rotation.x += 0.01;
-    torus.rotation.y += 0.01;
-    torus.rotation.z += 0.01;
+    sun.rotation.y += 0.0043210;
 
     renderer.render(scene, camera);
 }
