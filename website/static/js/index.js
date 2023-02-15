@@ -21,22 +21,39 @@ const sungeometry = new THREE.SphereGeometry(22.70340, 64, 32)
 const suntexture = new THREE.TextureLoader().load("/static/img/2k_sun.jpg")
 const sunmaterial = new THREE.MeshBasicMaterial({map: suntexture})
 const sun = new THREE.Mesh(sungeometry, sunmaterial)
+scene.add(sun);
+
+const mercurygeometry = new THREE.SphereGeometry(0.39615, 32, 16);
+const mercurytexture = new THREE.TextureLoader().load("/static/img/2k_mercury.jpg");
+const mercurymaterial = new THREE.MeshBasicMaterial({map: mercurytexture});
+const mercury = new THREE.Mesh(mercurygeometry, mercurymaterial);
+mercury.position.setZ(40);
+scene.add(mercury);
 
 const ambientlight = new THREE.AmbientLight(0xFFEEEE)
+//scene.add(ambientlight);
 
 const light = new THREE.PointLight(0xFFEEEE, 1, 100);
 light.position.set(1, 1, 1);
-
-//scene.add(ambientlight);
 scene.add(light);
-scene.add(sun);
+
+var frame = 0;
+
+function getRotation (frame, period) {
+    // takes period rate in days/rotation
+    // 1 second = 7 days
+    let rotation = frame / 60 / period * 7;
+    return(rotation);
+}
 
 function animate () {
     requestAnimationFrame(animate);
 
-    sun.rotation.y += 0.0043210;
+    sun.rotation.y = getRotation(frame, 27);
 
     renderer.render(scene, camera);
+    
+    frame++
 }
 
 animate();
