@@ -9,6 +9,11 @@
 .nav.transparent {
     background-color: rgba(59, 66, 82, 0.33);
 }
+nav.fixed {
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
 
 .nav-item {
     float: left;

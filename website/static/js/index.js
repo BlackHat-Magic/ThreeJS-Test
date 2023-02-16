@@ -129,17 +129,113 @@ function orbitalPosition (frame, orbitperiod, parent, radius) {
 }
 
 function moveCamera () {
-    let hermes = document.querySelector("#mercury").getBoundingClientRect().top;
-    let aphrodite = document.querySelector("#venus").getBoundingClientRect().top;
-    let gaia = document.querySelector("#earth").getBoundingClientRect().top;
-    let ares = document.querySelector("#mars").getBoundingClientRect().top;
-    let zeus = document.querySelector("#jupiter").getBoundingClientRect().top;
-    let cronus = document.querySelector("#saturn").getBoundingClientRect().top;
-    let caelus = document.querySelector("#uranus").getBoundingClientRect().top;
-    let poseidon = document.querySelector("#neptune").getBoundingClientRect().top;
-    let demeter = document.querySelector("#ceres").getBoundingClientRect().top;
-    let discordia = document.querySelector("#eris").getBoundingClientRect().top;
-    let hades = document.querySelector("#pluto").getBoundingClientRect().top;
+    //get how far down the user has scrolled
+    let position = document.body.getBoundingClientRect().top * -1;
+
+    //get positions of planet descriptions relative to document body
+    let hermes = document.querySelector("#mercury").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let aphrodite = document.querySelector("#venus").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let gaia = document.querySelector("#earth").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let ares = document.querySelector("#mars").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let zeus = document.querySelector("#jupiter").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let cronus = document.querySelector("#saturn").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let caelus = document.querySelector("#uranus").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let poseidon = document.querySelector("#neptune").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let demeter = document.querySelector("#ceres").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let discordia = document.querySelector("#eris").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let hades = document.querySelector("#pluto").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+
+    let progress = 0;
+    let distance = {
+        x: 0,
+        y: 0,
+        z: 0
+    }
+
+    if(position < hermes) {
+        // figure out how far between two planet descriptions the user is (scaled to between 0 and 1)
+        progress = 1 - (hermes - position) / hermes;
+
+        // get distance between planets on each axis, then interpolate where the position should be based on how far scrolled the user is
+        distance.x = (mercury.position.x - sun.position.x) * progress;
+        distance.y = (mercury.position.y - sun.position.y) * progress;
+        distance.z = (mercury.position.z - sun.position.z) * progress;
+
+        // set camera position
+        camera.position.setX(sun.position.x + distance.x);
+        camera.position.setY(sun.position.y + distance.y);
+        camera.position.setZ(sun.position.z + distance.z);
+    } else if (position < aphrodite) {
+        progress = 1 - (aphrodite - position) / (aphrodite - hermes);
+
+        distance.x = (venus.position.x - mercury.position.x) * progress;
+        distance.y = (venus.position.y - mercury.position.y) * progress;
+        distance.z = (venus.position.z - mercury.position.z) * progress;
+
+        camera.position.setX(mercury.position.x + distance.x);
+        camera.position.setY(mercury.position.y + distance.y);
+        camera.position.setZ(mercury.position.z + distance.z);
+    } else if (position < gaia) {
+        progress = 1 - (gaia - position) / (gaia - aphrodite);
+
+        distance.x = (earth.position.x - venus.position.x) * progress;
+        distance.y = (earth.position.y - venus.position.y) * progress;
+        distance.z = (earth.position.z - venus.position.z) * progress;
+
+        camera.position.setX(venus.position.x + distance.x);
+        camera.position.setY(venus.position.y + distance.y);
+        camera.position.setZ(venus.position.z + distance.z);
+    } else if (position < ares) {
+        progress = 1 - (ares - position) / (ares - gaia);
+
+        distance.x = (mars.position.x - earth.position.x) * progress;
+        distance.y = (mars.position.y - earth.position.y) * progress;
+        distance.z = (mars.position.z - earth.position.z) * progress;
+
+        camera.position.setX(earth.position.x + distance.x);
+        camera.position.setY(earth.position.y + distance.y);
+        camera.position.setZ(earth.position.z + distance.z);
+    } else if (position < zeus) {
+        progress = 1 - (zeus - position) / (zeus - ares);
+
+        distance.x = (jupiter.position.x - mars.position.x) * progress;
+        distance.y = (jupiter.position.y - mars.position.y) * progress;
+        distance.z = (jupiter.position.z - mars.position.z) * progress;
+
+        camera.position.setX(mars.position.x + distance.x);
+        camera.position.setY(mars.position.y + distance.y);
+        camera.position.setZ(mars.position.z + distance.z);
+    } else if (position < cronus) {
+        progress = 1 - (cronus - position) / (cronus - zeus);
+
+        distance.x = (saturn.position.x - jupiter.position.x) * progress;
+        distance.y = (saturn.position.y - jupiter.position.y) * progress;
+        distance.z = (saturn.position.z - jupiter.position.z) * progress;
+
+        camera.position.setX(jupiter.position.x + distance.x);
+        camera.position.setY(jupiter.position.y + distance.y);
+        camera.position.setZ(jupiter.position.z + distance.z);
+    } else if (position < caelus) {
+        progress = 1 - (caelus - position) / (caelus - cronus);
+
+        distance.x = (uranus.position.x - saturn.position.x) * progress;
+        distance.y = (uranus.position.y - saturn.position.y) * progress;
+        distance.z = (uranus.position.z - saturn.position.z) * progress;
+
+        camera.position.setX(saturn.position.x + distance.x);
+        camera.position.setY(saturn.position.y + distance.y);
+        camera.position.setZ(saturn.position.z + distance.z);
+    } else if (position < poseidon) {
+        progress = 1 - (poseidon - position) / (poseidon - caelus);
+
+        distance.x = (neptune.position.x - uranus.position.x) * progress;
+        distance.y = (neptune.position.y - uranus.position.y) * progress;
+        distance.z = (neptune.position.z - uranus.position.z) * progress;
+
+        camera.position.setX(uranus.position.x + distance.x);
+        camera.position.setY(uranus.position.y + distance.y);
+        camera.position.setZ(uranus.position.z + distance.z);
+    }
 }
 
 function animate () {
@@ -187,7 +283,8 @@ function animate () {
     renderer.render(scene, camera);
     
     frame++
+
+    moveCamera();
 }
 
 animate();
-document.body.onscroll = moveCamera
