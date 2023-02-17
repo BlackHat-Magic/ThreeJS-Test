@@ -1,5 +1,4 @@
-import * as THREE from '/static/js/three.module.js';
-import { OrbitControls } from '/static/js/OrbitControls.js';
+import * as THREE from './three.module.js';
 
 const scene = new THREE.Scene();
 
@@ -10,12 +9,7 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setX(100);
-camera.position.setY(100);
-camera.position.setZ(200);
 renderer.render(scene, camera);
-
-const controls = new OrbitControls(camera, renderer.domElement);
 
 const skyboxtexture = new THREE.TextureLoader().load('/static/img/8k_stars.jpg');
 scene.background = skyboxtexture;
@@ -90,8 +84,8 @@ const plutomaterial = new THREE.MeshStandardMaterial({map:plutotexture});
 const pluto = new THREE.Mesh(plutogeometry, plutomaterial);
 scene.add(pluto);
 
-const ambientlight = new THREE.AmbientLight(0xFFEEEE)
-//scene.add(ambientlight);
+const ambientlight = new THREE.AmbientLight(0xFFEEEE, 0.1)
+scene.add(ambientlight);
 
 const light = new THREE.PointLight(0xFFEEEE, 1, 10000);
 light.position.set(0, 0, 0);
@@ -113,19 +107,79 @@ function getRotation (frame, period) {
 function orbitalPosition (frame, orbitperiod, parent, radius) {
     // get time in seconds
     let time = frame / 60;
+
     // how many orbital periods have passed?
     let periodratio = time / orbitperiod;
+
     // adjust for pi radians
     let piadjusted = periodratio * 2 * 3.141592653589793238;
+
     // Calculate x, z coordinates
     let posx = Math.cos(piadjusted);
     let posz = Math.sin(piadjusted);
     posx *= radius;
     posz *= radius * -1;
+    
     // Adjust to parent coordinates
     posx += parent.position.x;
     posz += parent.position.z;
     return([posx, posz]);
+}
+
+function quadraticBezier (a, b, c, progress) {
+    // vectors from a to b and b to c
+    let ab = {
+        x: b.x - a.x,
+        y: b.y - a.y,
+        z: b.z - a.z
+    }
+    let bc = {
+        x: c.x - b.x,
+        y: c.y - b.y,
+        z: c.z - b.z
+    }
+
+    // position along ab and bc vectors
+    let interab = {
+        x: a.x + ab.x * progress,
+        y: a.y + ab.y * progress,
+        z: a.z + ab.z * progress
+    }
+    let interbc = {
+        x: b.x + bc.x * progress,
+        y: b.y + bc.y * progress,
+        z: b.z + bc.z * progress
+    }
+
+    // vector between positions along ab and bc vectors
+    let connector = {
+        x: interbc.x - interab.x,
+        y: interbc.y - interab.y,
+        z: interbc.z - interab.z
+    }
+
+    // position along connecting vector
+    let result = {
+        x: interab.x + connector.x * progress,
+        y: interab.y + connector.y * progress,
+        z: interab.z + connector.z * progress
+    }
+
+    return(result);
+}
+
+function bezierTransition (start, end, progress) {
+    let output = quadraticBezier (
+        start,
+        {
+            x: (start.x + end.x) / 2,
+            y: Math.sqrt(Math.pow(end.x - start.x, 2) + Math.pow(end.z - start.z, 2)),
+            z: (start.z + end.z) / 2
+        },
+        end,
+        progress
+    )
+    return(output);
 }
 
 function moveCamera () {
@@ -146,96 +200,76 @@ function moveCamera () {
     let hades = document.querySelector("#pluto").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
 
     let progress = 0;
-    let distance = {
-        x: 0,
-        y: 0,
-        z: 0
-    }
 
     if(position < hermes) {
         // figure out how far between two planet descriptions the user is (scaled to between 0 and 1)
         progress = 1 - (hermes - position) / hermes;
 
-        // get distance between planets on each axis, then interpolate where the position should be based on how far scrolled the user is
-        distance.x = (mercury.position.x - sun.position.x) * progress;
-        distance.y = (mercury.position.y - sun.position.y) * progress;
-        distance.z = (mercury.position.z - sun.position.z) * progress;
-
         // set camera position
-        camera.position.setX(sun.position.x + distance.x);
-        camera.position.setY(sun.position.y + distance.y);
-        camera.position.setZ(sun.position.z + distance.z);
+        let camerapos = bezierTransition({x: 60, y: 20, z: 60}, mercury.position, progress);
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
     } else if (position < aphrodite) {
         progress = 1 - (aphrodite - position) / (aphrodite - hermes);
 
-        distance.x = (venus.position.x - mercury.position.x) * progress;
-        distance.y = (venus.position.y - mercury.position.y) * progress;
-        distance.z = (venus.position.z - mercury.position.z) * progress;
+        let camerapos = bezierTransition(mercury.position, venus.position, progress);
 
-        camera.position.setX(mercury.position.x + distance.x);
-        camera.position.setY(mercury.position.y + distance.y);
-        camera.position.setZ(mercury.position.z + distance.z);
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
     } else if (position < gaia) {
         progress = 1 - (gaia - position) / (gaia - aphrodite);
 
-        distance.x = (earth.position.x - venus.position.x) * progress;
-        distance.y = (earth.position.y - venus.position.y) * progress;
-        distance.z = (earth.position.z - venus.position.z) * progress;
+        let camerapos = bezierTransition(venus.position, earth.position, progress);
 
-        camera.position.setX(venus.position.x + distance.x);
-        camera.position.setY(venus.position.y + distance.y);
-        camera.position.setZ(venus.position.z + distance.z);
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
     } else if (position < ares) {
         progress = 1 - (ares - position) / (ares - gaia);
 
-        distance.x = (mars.position.x - earth.position.x) * progress;
-        distance.y = (mars.position.y - earth.position.y) * progress;
-        distance.z = (mars.position.z - earth.position.z) * progress;
+        let camerapos = bezierTransition(earth.position, mars.position, progress);
 
-        camera.position.setX(earth.position.x + distance.x);
-        camera.position.setY(earth.position.y + distance.y);
-        camera.position.setZ(earth.position.z + distance.z);
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
     } else if (position < zeus) {
         progress = 1 - (zeus - position) / (zeus - ares);
 
-        distance.x = (jupiter.position.x - mars.position.x) * progress;
-        distance.y = (jupiter.position.y - mars.position.y) * progress;
-        distance.z = (jupiter.position.z - mars.position.z) * progress;
+        let camerapos = bezierTransition(mars.position, jupiter.position, progress);
 
-        camera.position.setX(mars.position.x + distance.x);
-        camera.position.setY(mars.position.y + distance.y);
-        camera.position.setZ(mars.position.z + distance.z);
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
     } else if (position < cronus) {
         progress = 1 - (cronus - position) / (cronus - zeus);
 
-        distance.x = (saturn.position.x - jupiter.position.x) * progress;
-        distance.y = (saturn.position.y - jupiter.position.y) * progress;
-        distance.z = (saturn.position.z - jupiter.position.z) * progress;
+        let camerapos = bezierTransition(jupiter.position, saturn.position, progress);
 
-        camera.position.setX(jupiter.position.x + distance.x);
-        camera.position.setY(jupiter.position.y + distance.y);
-        camera.position.setZ(jupiter.position.z + distance.z);
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
     } else if (position < caelus) {
         progress = 1 - (caelus - position) / (caelus - cronus);
 
-        distance.x = (uranus.position.x - saturn.position.x) * progress;
-        distance.y = (uranus.position.y - saturn.position.y) * progress;
-        distance.z = (uranus.position.z - saturn.position.z) * progress;
+        let camerapos = bezierTransition(saturn.position, uranus.position, progress);
 
-        camera.position.setX(saturn.position.x + distance.x);
-        camera.position.setY(saturn.position.y + distance.y);
-        camera.position.setZ(saturn.position.z + distance.z);
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
     } else if (position < poseidon) {
         progress = 1 - (poseidon - position) / (poseidon - caelus);
 
-        distance.x = (neptune.position.x - uranus.position.x) * progress;
-        distance.y = (neptune.position.y - uranus.position.y) * progress;
-        distance.z = (neptune.position.z - uranus.position.z) * progress;
+        let camerapos = bezierTransition(uranus.position, neptune.position, progress);
 
-        camera.position.setX(uranus.position.x + distance.x);
-        camera.position.setY(uranus.position.y + distance.y);
-        camera.position.setZ(uranus.position.z + distance.z);
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
     }
+
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
 }
 
 function animate () {
@@ -279,7 +313,6 @@ function animate () {
     pluto.rotation.y = getRotation(frame, -6.387230);
     pluto.position.z = orbitalPosition(frame, 90560, sun, 270)[1];
 
-    controls.update();
     renderer.render(scene, camera);
     
     frame++
