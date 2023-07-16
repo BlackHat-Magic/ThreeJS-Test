@@ -127,20 +127,23 @@ function orbitalPosition (frame, orbitperiod, parent, radius) {
 }
 
 function cameraOffset (position, radius, leftright) {
-    let magnitude = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.y, 2) + Math.pow(position.z, 2));
+    let magnitude = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.z, 2));
 
 
     let unitvector = {
         x: position.x / magnitude,
-        y: position.y / magnitude,
+        y: 0,
         z: position.z / magnitude
     }
 
     let offset = {
         x: position.x + unitvector.x * radius * 2,
-        y: position.y + unitvector.y * radius * 2,
+        y: 0,
         z: position.z + unitvector.z * radius * 2
     }
+    offset.x += unitvector.z;
+    offset.z += unitvector.x;
+    console.log(Math.sqrt(offset.x * offset.x + offset.z * offset.z))
 
     return(offset);
 }
@@ -276,14 +279,38 @@ function moveCamera () {
     let position = document.body.getBoundingClientRect().top * -1;
 
     //get positions of planet descriptions relative to document body
-    let hermes = document.querySelector("#mercury").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let aphrodite = document.querySelector("#venus").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let gaia = document.querySelector("#earth").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let ares = document.querySelector("#mars").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let zeus = document.querySelector("#jupiter").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let cronus = document.querySelector("#saturn").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let caelus = document.querySelector("#uranus").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let poseidon = document.querySelector("#neptune").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
+    let hermes = {
+        top: 1 * (document.querySelector("#mercury").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
+        bottom: document.querySelector("#mercury").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+    }
+    let aphrodite = {
+        top: 1 * (document.querySelector("#venus").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
+        bottom: document.querySelector("#venus").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+    };
+    let gaia = {
+        top: 1 * (document.querySelector("#earth").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
+        bottom: document.querySelector("#earth").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+    };
+    let ares = {
+        top: 1 * (document.querySelector("#mars").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
+        bottom: document.querySelector("#mars").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+    };
+    let zeus = {
+        top: 1 * (document.querySelector("#jupiter").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
+        bottom: document.querySelector("#jupiter").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+    };
+    let cronus = {
+        top: 1 * (document.querySelector("#saturn").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
+        bottom: document.querySelector("#saturn").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+    };
+    let caelus = {
+        top: 1 * (document.querySelector("#uranus").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
+        bottom: document.querySelector("#uranus").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+    };
+    let poseidon = {
+        top: 1 * (document.querySelector("#neptune").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
+        bottom: document.querySelector("#neptune").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+    };
     let demeter = document.querySelector("#ceres").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
     let discordia = document.querySelector("#eris").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
     let hades = document.querySelector("#pluto").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
@@ -291,9 +318,9 @@ function moveCamera () {
     let oldprogress = 0;
     let progress = 0
 
-    if(position < hermes) {
+    if(position < hermes.top) {
         // figure out how far between two planet descriptions the user is (scaled to between 0 and 1)
-        oldprogress = 1 - (hermes - position) / hermes;
+        oldprogress = 1 - (hermes.top - position) / hermes.top;
         progress = cubicBezier(
             {
                 x: 0,
@@ -302,12 +329,12 @@ function moveCamera () {
             },
             {
                 x: 0,
-                y: 0,
+                y: 100,
                 z: 0
             },
             {
-                x: 1.01,
-                y: 0,
+                x: 1,
+                y: 100,
                 z: 0
             },
             {
@@ -324,8 +351,14 @@ function moveCamera () {
         camera.position.setX(camerapos.x);
         camera.position.setY(camerapos.y);
         camera.position.setZ(camerapos.z);
-    } else if (position < aphrodite) {
-        oldprogress = 1 - (aphrodite - position) / (aphrodite - hermes);
+    } else if (position < hermes.bottom) {
+        let camerapos = cameraOffset(mercury.position, 0.39615, 1);
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
+    } else if (position < aphrodite.top) {
+        oldprogress = 1 - (aphrodite.top - position) / (aphrodite.top - hermes.bottom);
         progress = cubicBezier(
             {
                 x: 0,
@@ -334,12 +367,12 @@ function moveCamera () {
             },
             {
                 x: 0,
-                y: 0,
+                y: 100,
                 z: 0
             },
             {
-                x: 1.01,
-                y: 0,
+                x: 1,
+                y: 100,
                 z: 0
             },
             {
@@ -350,15 +383,19 @@ function moveCamera () {
             oldprogress
         ).x
 
-        console.log(progress + "; " + oldprogress)
-
         let camerapos = bezierTransition(cameraOffset(mercury.position, 0.39615, 1), cameraOffset(venus.position, 0.94985, 1), progress);
 
         camera.position.setX(camerapos.x);
         camera.position.setY(camerapos.y);
         camera.position.setZ(camerapos.z);
-    } else if (position < gaia) {
-        oldprogress = 1 - (gaia - position) / (gaia - aphrodite);
+    } else if (position < aphrodite.bottom) {
+        let camerapos = cameraOffset(venus.position, 0.94985, 1);
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
+    } else if (position < gaia.top) {
+        oldprogress = 1 - (gaia.top - position) / (gaia.top - aphrodite.bottom);
         progress = cubicBezier(
             {
                 x: 0,
@@ -388,8 +425,14 @@ function moveCamera () {
         camera.position.setX(camerapos.x);
         camera.position.setY(camerapos.y);
         camera.position.setZ(camerapos.z);
-    } else if (position < ares) {
-        oldprogress = 1 - (ares - position) / (ares - gaia);
+    } else if (position < gaia.bottom) {
+        let camerapos = cameraOffset(earth.position, 1, 1);
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
+    } else if (position < ares.top) {
+        oldprogress = 1 - (ares.top - position) / (ares.top - gaia.bottom);
         progress = cubicBezier(
             {
                 x: 0,
@@ -419,8 +462,14 @@ function moveCamera () {
         camera.position.setX(camerapos.x);
         camera.position.setY(camerapos.y);
         camera.position.setZ(camerapos.z);
-    } else if (position < zeus) {
-        oldprogress = 1 - (zeus - position) / (zeus - ares);
+    } else if (position < ares.bottom) {
+        let camerapos = cameraOffset(mars.position, 0.53242, 1)
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
+    } else if (position < zeus.top) {
+        oldprogress = 1 - (zeus.top - position) / (zeus.top - ares.bottom);
         progress = cubicBezier(
             {
                 x: 0,
@@ -450,8 +499,14 @@ function moveCamera () {
         camera.position.setX(camerapos.x);
         camera.position.setY(camerapos.y);
         camera.position.setZ(camerapos.z);
-    } else if (position < cronus) {
-        oldprogress = 1 - (cronus - position) / (cronus - zeus);
+    } else if (position < zeus.bottom) {
+        let camerapos = cameraOffset(jupiter.position, 11.3517, 1)
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
+    } else if (position < cronus.top) {
+        oldprogress = 1 - (cronus.top - position) / (cronus.top - zeus.bottom);
         progress = cubicBezier(
             {
                 x: 0,
@@ -481,8 +536,14 @@ function moveCamera () {
         camera.position.setX(camerapos.x);
         camera.position.setY(camerapos.y);
         camera.position.setZ(camerapos.z);
-    } else if (position < caelus) {
-        oldprogress = 1 - (caelus - position) / (caelus - cronus);
+    } else if (position < cronus.bottom) {
+        let camerapos = cameraOffset(saturn.position, 9.1402, 1)
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
+    } else if (position < caelus.top) {
+        oldprogress = 1 - (caelus.top - position) / (caelus.top - cronus.bottom);
         progress = cubicBezier(
             {
                 x: 0,
@@ -512,8 +573,14 @@ function moveCamera () {
         camera.position.setX(camerapos.x);
         camera.position.setY(camerapos.y);
         camera.position.setZ(camerapos.z);
-    } else if (position < poseidon) {
-        oldprogress = 1 - (poseidon - position) / (poseidon - caelus);
+    } else if (position < caelus.bottom) {
+        let camerapos = cameraOffset(uranus.position, 3.97648, 1)
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
+    } else if (position < poseidon.top) {
+        oldprogress = 1 - (poseidon.top - position) / (poseidon.top - caelus.bottom);
         progress = cubicBezier(
             {
                 x: 0,
@@ -539,6 +606,12 @@ function moveCamera () {
         ).x
 
         let camerapos = bezierTransition(cameraOffset(uranus.position, 3.97648, 1), cameraOffset(neptune.position, 3.86046, 1), progress);
+
+        camera.position.setX(camerapos.x);
+        camera.position.setY(camerapos.y);
+        camera.position.setZ(camerapos.z);
+    } else if (position < poseidon.bottom) {
+        let camerapos = cameraOffset(neptune.position, 3.86046, 1)
 
         camera.position.setX(camerapos.x);
         camera.position.setY(camerapos.y);
