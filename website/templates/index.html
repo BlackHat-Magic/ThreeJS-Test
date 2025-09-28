@@ -1,518 +1,526 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, viewport-fit=cover"
-        />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <link
-            rel="icon"
-            type="image/png"
-            href="{{ url_for('static', filename='img/icon.png') }}"
-        />
-        <title>{{ title }} | Three.js test</title>
+<head>
+<meta charset="UTF-8" />
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link
+    rel="icon"
+    type="image/png"
+    href="{{ url_for('static', filename='img/icon.png') }}"
+/>
+<title>{{ title }} | Three.js test</title>
 
-        <!-- Tailwind v4 compiled CSS -->
-        <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='dist/main.css') }}"
-        />
+<!-- Tailwind v4 compiled CSS -->
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='dist/main.css') }}"
+/>
 
-        <!-- Three.js entry (ES module) -->
-        <script
-            type="module"
-            src="{{ url_for('static', filename='js/index.js') }}"
-            defer
-        ></script>
-    </head>
+<!-- Three.js entry -->
+<script async src="https://unpkg.com/es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+<script type="importmap">
+{
+    "imports": {
+    "three": "https://unpkg.com/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/"
+    }
+}
+</script>
+<script
+    type="module"
+    src="{{ url_for('static', filename='js/index.js') }}"
+    defer
+></script>
+</head>
 
-    <body class="min-h-screen bg-background text-text antialiased">
-        <!-- Fixed canvas behind content -->
-        <canvas
-            id="canvas"
-            class="fixed inset-0 -z-10"
-            x-data="canvas"
-        ></canvas>
+<body class="min-h-screen bg-background text-text antialiased">
+<!-- Fixed canvas behind content -->
+<canvas
+    id="canvas"
+    class="fixed inset-0 -z-10"
+></canvas>
 
-        <main class="mx-auto my-12 w-[75%] max-w-[1400px]">
-            <div
-                class="grid grid-cols-12 gap-3"
-            >
-                <header class="panel col-span-12 md:col-start-4 md:col-span-6">
-                    <h1 class="text-center text-4xl md:text-6xl lg:text-7xl my-6">
-                        Three JS Demo: The Solar System
-                    </h1>
+<main class="mx-auto my-12 w-[75%] max-w-[1400px]">
+    <div
+        class="grid grid-cols-12 gap-3"
+    >
+        <header class="panel col-span-12 md:col-start-4 md:col-span-6">
+            <h1 class="text-center text-4xl md:text-6xl lg:text-7xl my-6">
+                Three JS Demo: The Solar System
+            </h1>
 
-                    <p class="mb-4">
-                        The Solar System is a vast and complex system that consists of the
-                        Sun, eight planets, numerous dwarf planets, moons, asteroids,
-                        comets, and other small bodies. It is located in the Milky Way
-                        galaxy, about 25,000 light-years from the galactic center, and
-                        spans an enormous distance of over 9 billion kilometers (5.6
-                        billion miles) from the Sun to the edge of the Kuiper Belt.
-                    </p>
-                    <p class="mb-4">
-                        The Sun is the central and most massive object in the Solar System,
-                        accounting for more than 99% of its total mass. It is a massive
-                        ball of plasma that produces light and heat through nuclear fusion
-                        in its core. The eight planets of the Solar System are Mercury,
-                        Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune. The four
-                        inner planets, Mercury, Venus, Earth, and Mars, are small, rocky,
-                        and relatively close to the Sun, while the four outer planets,
-                        Jupiter, Saturn, Uranus, and Neptune, are much larger, gas giants,
-                        and located much further from the Sun.
-                    </p>
-                    <p class="mb-4">
-                        In addition to the eight planets, the Solar System also contains
-                        numerous dwarf planets, such as Pluto, Ceres, Eris, and Haumea, as
-                        well as many moons, asteroids, comets, and other small bodies. The
-                        asteroid belt, located between Mars and Jupiter, is a region of the
-                        Solar System that contains many small, rocky bodies, while the
-                        Kuiper Belt, located beyond Neptune, is a region that contains many
-                        small, icy objects.
-                    </p>
-                    <p class="mb-4">
-                        The Solar System is also home to a number of important space
-                        missions, such as the Voyager spacecraft, which explored the outer
-                        planets and provided valuable information about their composition
-                        and environment, and the ongoing New Horizons mission, which is
-                        exploring the Kuiper Belt and providing new insights into this
-                        remote and mysterious region of the Solar System.
-                    </p>
-                </header>
+            <p class="mb-4">
+                The Solar System is a vast and complex system that consists of the
+                Sun, eight planets, numerous dwarf planets, moons, asteroids,
+                comets, and other small bodies. It is located in the Milky Way
+                galaxy, about 25,000 light-years from the galactic center, and
+                spans an enormous distance of over 9 billion kilometers (5.6
+                billion miles) from the Sun to the edge of the Kuiper Belt.
+            </p>
+            <p class="mb-4">
+                The Sun is the central and most massive object in the Solar System,
+                accounting for more than 99% of its total mass. It is a massive
+                ball of plasma that produces light and heat through nuclear fusion
+                in its core. The eight planets of the Solar System are Mercury,
+                Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune. The four
+                inner planets, Mercury, Venus, Earth, and Mars, are small, rocky,
+                and relatively close to the Sun, while the four outer planets,
+                Jupiter, Saturn, Uranus, and Neptune, are much larger, gas giants,
+                and located much further from the Sun.
+            </p>
+            <p class="mb-4">
+                In addition to the eight planets, the Solar System also contains
+                numerous dwarf planets, such as Pluto, Ceres, Eris, and Haumea, as
+                well as many moons, asteroids, comets, and other small bodies. The
+                asteroid belt, located between Mars and Jupiter, is a region of the
+                Solar System that contains many small, rocky bodies, while the
+                Kuiper Belt, located beyond Neptune, is a region that contains many
+                small, icy objects.
+            </p>
+            <p class="mb-4">
+                The Solar System is also home to a number of important space
+                missions, such as the Voyager spacecraft, which explored the outer
+                planets and provided valuable information about their composition
+                and environment, and the ongoing New Horizons mission, which is
+                exploring the Kuiper Belt and providing new insights into this
+                remote and mysterious region of the Solar System.
+            </p>
+        </header>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Mercury -->
-                <section id="mercury" class="panel col-span-12 md:col-span-6 md:col-start-1">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Mercury</h2>
-                    <p class="mb-4">
-                        Mercury is the closest planet to the Sun and is also the smallest
-                        planet in our Solar System. It is named after the Roman messenger
-                        god because of its rapid orbit around the Sun.
-                    </p>
-                    <p class="mb-4">
-                        Mercury has a rocky surface, similar to that of Earth's Moon, and is
-                        heavily cratered due to its lack of atmosphere to protect it from
-                        impacts. Its surface is also marked with cliffs, mountains, and
-                        valleys, with some of the cliffs being more than a mile high.
-                        Interestingly, the temperature on Mercury varies greatly, ranging
-                        from over 800 degrees Fahrenheit during the day to below -290
-                        degrees Fahrenheit at night, due to its lack of atmosphere and slow
-                        rotation.
-                    </p>
-                    <p class="mb-4">
-                        One of the most interesting facts about Mercury is that it is the
-                        only planet in our Solar System to have a 3:2 spin-orbit resonance,
-                        meaning it rotates three times for every two revolutions it makes
-                        around the Sun. This results in each Mercury day being equivalent to
-                        two Mercury years.
-                    </p>
-                    <p class="mb-4">
-                        Despite its small size, Mercury has a magnetic field, although it is
-                        much weaker than Earth's. The planet also has no moons or rings, and
-                        has been visited by only two spacecraft: Mariner 10 in 1974 and
-                        1975, and the MESSENGER mission in 2008, which orbited the planet
-                        for four years before crashing into its surface.
-                    </p>
-                </section>
+        <!-- Mercury -->
+        <section id="mercury" class="panel col-span-12 md:col-span-6 md:col-start-1">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Mercury</h2>
+            <p class="mb-4">
+                Mercury is the closest planet to the Sun and is also the smallest
+                planet in our Solar System. It is named after the Roman messenger
+                god because of its rapid orbit around the Sun.
+            </p>
+            <p class="mb-4">
+                Mercury has a rocky surface, similar to that of Earth's Moon, and is
+                heavily cratered due to its lack of atmosphere to protect it from
+                impacts. Its surface is also marked with cliffs, mountains, and
+                valleys, with some of the cliffs being more than a mile high.
+                Interestingly, the temperature on Mercury varies greatly, ranging
+                from over 800 degrees Fahrenheit during the day to below -290
+                degrees Fahrenheit at night, due to its lack of atmosphere and slow
+                rotation.
+            </p>
+            <p class="mb-4">
+                One of the most interesting facts about Mercury is that it is the
+                only planet in our Solar System to have a 3:2 spin-orbit resonance,
+                meaning it rotates three times for every two revolutions it makes
+                around the Sun. This results in each Mercury day being equivalent to
+                two Mercury years.
+            </p>
+            <p class="mb-4">
+                Despite its small size, Mercury has a magnetic field, although it is
+                much weaker than Earth's. The planet also has no moons or rings, and
+                has been visited by only two spacecraft: Mariner 10 in 1974 and
+                1975, and the MESSENGER mission in 2008, which orbited the planet
+                for four years before crashing into its surface.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Venus -->
-                <section id="venus" class="panel col-span-12 md:col-span-6 md:col-start-7">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Venus</h2>
-                    <p class="mb-4">
-                        Venus is often referred to as Earth's sister planet, as it is
-                        similar in size and composition. It is the second planet from the
-                        Sun and has a thick atmosphere mostly made up of carbon dioxide,
-                        which produces a strong greenhouse effect that makes it the hottest
-                        planet in our Solar System, even hotter than Mercury.
-                    </p>
-                    <p class="mb-4">
-                        The surface of Venus is mostly made up of volcanic rock, with large
-                        shield volcanoes and hundreds of thousands of smaller volcanic
-                        features scattered across its surface. The planet also has no
-                        tectonic plates, which means that its surface is not actively
-                        recycled like Earth's.
-                    </p>
-                    <p class="mb-4">
-                        One of the most interesting facts about Venus is that it rotates in
-                        the opposite direction to most of the other planets in our Solar
-                        System. This means that its day, which is longer than its year, is
-                        the equivalent of almost 117 Earth days. Additionally, Venus is the
-                        brightest object in the night sky after the Moon, and has been known
-                        since ancient times.
-                    </p>
-                    <p class="mb-4">
-                        Venus has been visited by many spacecraft, including the Soviet
-                        Venera and Vega missions, as well as NASA's Magellan mission, which
-                        used radar to map the planet's surface. Despite these missions, much
-                        of Venus's surface remains shrouded in thick clouds, which make it
-                        difficult to study.
-                    </p>
-                </section>
+        <!-- Venus -->
+        <section id="venus" class="panel col-span-12 md:col-span-6 md:col-start-7">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Venus</h2>
+            <p class="mb-4">
+                Venus is often referred to as Earth's sister planet, as it is
+                similar in size and composition. It is the second planet from the
+                Sun and has a thick atmosphere mostly made up of carbon dioxide,
+                which produces a strong greenhouse effect that makes it the hottest
+                planet in our Solar System, even hotter than Mercury.
+            </p>
+            <p class="mb-4">
+                The surface of Venus is mostly made up of volcanic rock, with large
+                shield volcanoes and hundreds of thousands of smaller volcanic
+                features scattered across its surface. The planet also has no
+                tectonic plates, which means that its surface is not actively
+                recycled like Earth's.
+            </p>
+            <p class="mb-4">
+                One of the most interesting facts about Venus is that it rotates in
+                the opposite direction to most of the other planets in our Solar
+                System. This means that its day, which is longer than its year, is
+                the equivalent of almost 117 Earth days. Additionally, Venus is the
+                brightest object in the night sky after the Moon, and has been known
+                since ancient times.
+            </p>
+            <p class="mb-4">
+                Venus has been visited by many spacecraft, including the Soviet
+                Venera and Vega missions, as well as NASA's Magellan mission, which
+                used radar to map the planet's surface. Despite these missions, much
+                of Venus's surface remains shrouded in thick clouds, which make it
+                difficult to study.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Earth -->
-                <section id="earth" class="panel col-span-12 md:col-span-6 md:col-start-1">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Earth</h2>
-                    <p class="mb-4">
-                        Earth is the third planet from the Sun and is the only known planet
-                        in our Solar System to support life. It is a dynamic and constantly
-                        changing planet, with a diverse range of environments that range
-                        from the depths of the ocean to the peaks of the highest mountains.
-                    </p>
-                    <p class="mb-4">
-                        The planet is mostly covered in water, with approximately 71% of its
-                        surface covered by oceans, and the remaining 29% made up of
-                        continents and islands. Earth's atmosphere is mostly made up of
-                        nitrogen and oxygen, which provides the necessary conditions for life
-                        to exist.
-                    </p>
-                    <p class="mb-4">
-                        Earth has a magnetic field, which protects it from the harmful
-                        effects of the solar wind, and its rotation on its axis gives us our
-                        day and night cycle. Interestingly, the length of a day on Earth is
-                        gradually increasing, with the planet's rotation slowing down by
-                        approximately 1.8 milliseconds per century.
-                    </p>
-                    <p class="mb-4">
-                        One of the most fascinating features of Earth is its biosphere,
-                        which is the part of the planet that supports life. It is made up of
-                        all living things, as well as the environments they live in, such as
-                        forests, oceans, and grasslands. The biosphere is interconnected,
-                        with each living thing playing a role in maintaining the delicate
-                        balance of life on our planet.
-                    </p>
-                    <p class="mb-4">
-                        Earth has been studied extensively, with countless missions to space
-                        and the development of sophisticated technology allowing us to better
-                        understand the planet's processes and history. However, there is
-                        still much to learn about our planet, and ongoing research and
-                        exploration will continue to uncover new information and insights.
-                    </p>
-                </section>
+        <!-- Earth -->
+        <section id="earth" class="panel col-span-12 md:col-span-6 md:col-start-1">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Earth</h2>
+            <p class="mb-4">
+                Earth is the third planet from the Sun and is the only known planet
+                in our Solar System to support life. It is a dynamic and constantly
+                changing planet, with a diverse range of environments that range
+                from the depths of the ocean to the peaks of the highest mountains.
+            </p>
+            <p class="mb-4">
+                The planet is mostly covered in water, with approximately 71% of its
+                surface covered by oceans, and the remaining 29% made up of
+                continents and islands. Earth's atmosphere is mostly made up of
+                nitrogen and oxygen, which provides the necessary conditions for life
+                to exist.
+            </p>
+            <p class="mb-4">
+                Earth has a magnetic field, which protects it from the harmful
+                effects of the solar wind, and its rotation on its axis gives us our
+                day and night cycle. Interestingly, the length of a day on Earth is
+                gradually increasing, with the planet's rotation slowing down by
+                approximately 1.8 milliseconds per century.
+            </p>
+            <p class="mb-4">
+                One of the most fascinating features of Earth is its biosphere,
+                which is the part of the planet that supports life. It is made up of
+                all living things, as well as the environments they live in, such as
+                forests, oceans, and grasslands. The biosphere is interconnected,
+                with each living thing playing a role in maintaining the delicate
+                balance of life on our planet.
+            </p>
+            <p class="mb-4">
+                Earth has been studied extensively, with countless missions to space
+                and the development of sophisticated technology allowing us to better
+                understand the planet's processes and history. However, there is
+                still much to learn about our planet, and ongoing research and
+                exploration will continue to uncover new information and insights.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Mars -->
-                <section id="mars" class="panel col-span-12 md:col-span-6 md:col-start-7">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Mars</h2>
-                    <p class="mb-4">
-                        Mars is the fourth planet from the Sun and is often referred to as
-                        the Red Planet because of its reddish appearance in the night sky.
-                        It is a small, rocky planet with a thin atmosphere, and is often the
-                        subject of scientific interest and exploration due to its potential
-                        to have once supported life.
-                    </p>
-                    <p class="mb-4">
-                        Mars has a surface that is similar in appearance to the deserts of
-                        Earth, with rocky terrain and vast stretches of sand dunes. It is
-                        also home to some of the largest volcanoes in the Solar System, such
-                        as Olympus Mons, which is three times the height of Mount Everest.
-                    </p>
-                    <p class="mb-4">
-                        One of the most interesting features of Mars is its ice caps, which
-                        are made up of both water ice and carbon dioxide. These ice caps
-                        undergo seasonal changes, growing and shrinking depending on the
-                        planet's position in its orbit.
-                    </p>
-                    <p class="mb-4">
-                        Mars is also home to many deep canyons, such as Valles Marineris,
-                        which is the largest canyon in the Solar System, as well as many
-                        impact craters, some of which are so large that they have their own
-                        weather systems.
-                    </p>
-                    <p class="mb-4">
-                        Mars has been the subject of many space missions, with the most
-                        recent being NASA's Perseverance rover, which landed on the planet
-                        in February 2021. The rover's mission is to search for evidence of
-                        ancient microbial life and to collect samples that will be returned
-                        to Earth for further study.
-                    </p>
-                </section>
+        <!-- Mars -->
+        <section id="mars" class="panel col-span-12 md:col-span-6 md:col-start-7">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Mars</h2>
+            <p class="mb-4">
+                Mars is the fourth planet from the Sun and is often referred to as
+                the Red Planet because of its reddish appearance in the night sky.
+                It is a small, rocky planet with a thin atmosphere, and is often the
+                subject of scientific interest and exploration due to its potential
+                to have once supported life.
+            </p>
+            <p class="mb-4">
+                Mars has a surface that is similar in appearance to the deserts of
+                Earth, with rocky terrain and vast stretches of sand dunes. It is
+                also home to some of the largest volcanoes in the Solar System, such
+                as Olympus Mons, which is three times the height of Mount Everest.
+            </p>
+            <p class="mb-4">
+                One of the most interesting features of Mars is its ice caps, which
+                are made up of both water ice and carbon dioxide. These ice caps
+                undergo seasonal changes, growing and shrinking depending on the
+                planet's position in its orbit.
+            </p>
+            <p class="mb-4">
+                Mars is also home to many deep canyons, such as Valles Marineris,
+                which is the largest canyon in the Solar System, as well as many
+                impact craters, some of which are so large that they have their own
+                weather systems.
+            </p>
+            <p class="mb-4">
+                Mars has been the subject of many space missions, with the most
+                recent being NASA's Perseverance rover, which landed on the planet
+                in February 2021. The rover's mission is to search for evidence of
+                ancient microbial life and to collect samples that will be returned
+                to Earth for further study.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Jupiter -->
-                <section id="jupiter" class="panel col-span-12 md:col-span-6 md:col-start-1">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Jupiter</h2>
-                    <p class="mb-4">
-                        Jupiter is the largest planet in our Solar System, with a diameter
-                        of approximately 86,881 miles (139,822 kilometers), which is more
-                        than 11 times the size of Earth's. It is a gas giant planet and is
-                        composed mostly of hydrogen and helium. It is the fifth planet from
-                        the Sun and is known for its great red spot, a giant storm that has
-                        been raging on the planet's surface for hundreds of years.
-                    </p>
-                    <p class="mb-4">
-                        Jupiter is also known for its many moons, with over 80 known
-                        satellites orbiting the planet. The four largest of these moons, Io,
-                        Europa, Ganymede, and Callisto, are known as the Galilean moons,
-                        after the astronomer Galileo Galilei who discovered them in 1610.
-                        These moons are each unique in their own way, with Europa being of
-                        particular interest to scientists due to the possibility of it
-                        having a subsurface ocean.
-                    </p>
-                    <p class="mb-4">
-                        Jupiter has a strong magnetic field, which is more than 20,000 times
-                        stronger than Earth's. This magnetic field traps particles from the
-                        solar wind, creating intense radiation belts around the planet. These
-                        radiation belts can be hazardous for spacecraft and for any
-                        potential future human missions to the planet.
-                    </p>
-                    <p class="mb-4">
-                        Jupiter has been visited by several spacecraft, including NASA's
-                        Juno mission, which is currently in orbit around the planet. The
-                        mission aims to study the planet's magnetic field, atmosphere, and
-                        interior structure, and is expected to provide new insights into the
-                        formation and evolution of the planet.
-                    </p>
-                </section>
+        <!-- Jupiter -->
+        <section id="jupiter" class="panel col-span-12 md:col-span-6 md:col-start-1">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Jupiter</h2>
+            <p class="mb-4">
+                Jupiter is the largest planet in our Solar System, with a diameter
+                of approximately 86,881 miles (139,822 kilometers), which is more
+                than 11 times the size of Earth's. It is a gas giant planet and is
+                composed mostly of hydrogen and helium. It is the fifth planet from
+                the Sun and is known for its great red spot, a giant storm that has
+                been raging on the planet's surface for hundreds of years.
+            </p>
+            <p class="mb-4">
+                Jupiter is also known for its many moons, with over 80 known
+                satellites orbiting the planet. The four largest of these moons, Io,
+                Europa, Ganymede, and Callisto, are known as the Galilean moons,
+                after the astronomer Galileo Galilei who discovered them in 1610.
+                These moons are each unique in their own way, with Europa being of
+                particular interest to scientists due to the possibility of it
+                having a subsurface ocean.
+            </p>
+            <p class="mb-4">
+                Jupiter has a strong magnetic field, which is more than 20,000 times
+                stronger than Earth's. This magnetic field traps particles from the
+                solar wind, creating intense radiation belts around the planet. These
+                radiation belts can be hazardous for spacecraft and for any
+                potential future human missions to the planet.
+            </p>
+            <p class="mb-4">
+                Jupiter has been visited by several spacecraft, including NASA's
+                Juno mission, which is currently in orbit around the planet. The
+                mission aims to study the planet's magnetic field, atmosphere, and
+                interior structure, and is expected to provide new insights into the
+                formation and evolution of the planet.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Saturn -->
-                <section id="saturn" class="panel col-span-12 md:col-span-6 md:col-start-7">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Saturn</h2>
-                    <p class="mb-4">
-                        Saturn is the sixth planet from the Sun and is known for its
-                        beautiful rings, which are composed of countless individual
-                        particles of ice and rock. It is a gas giant planet, similar in
-                        composition to Jupiter, and is the second-largest planet in our
-                        Solar System.
-                    </p>
-                    <p class="mb-4">
-                        Saturn has a unique atmosphere, with swirling clouds and storms that
-                        can reach speeds of up to 1,100 miles per hour (1,800 kilometers per
-                        hour). The planet is also home to many moons, with over 80 known
-                        satellites in orbit around it. Titan, one of Saturn's largest moons,
-                        is of particular interest to scientists because it is the only moon
-                        in the Solar System with a dense atmosphere.
-                    </p>
-                    <p class="mb-4">
-                        The rings of Saturn are one of the planet's most striking features.
-                        They are made up of millions of individual particles, ranging in
-                        size from tiny dust particles to large boulders. The rings are
-                        believed to be the remnants of a moon or other object that was
-                        destroyed by Saturn's gravity.
-                    </p>
-                    <p class="mb-4">
-                        Saturn has been visited by several spacecraft, including NASA's
-                        Cassini mission, which orbited the planet for 13 years before
-                        intentionally crashing into Saturn in 2017. The mission provided
-                        scientists with valuable data and insights into the planet's
-                        atmosphere, rings, and moons.
-                    </p>
-                    <p class="mb-4">
-                        In addition to its scientific significance, Saturn is also a popular
-                        target for amateur astronomers due to its beauty and prominent
-                        rings. The planet is visible to the naked eye from Earth and can be
-                        observed through a telescope or binoculars.
-                    </p>
-                </section>
+        <!-- Saturn -->
+        <section id="saturn" class="panel col-span-12 md:col-span-6 md:col-start-7">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Saturn</h2>
+            <p class="mb-4">
+                Saturn is the sixth planet from the Sun and is known for its
+                beautiful rings, which are composed of countless individual
+                particles of ice and rock. It is a gas giant planet, similar in
+                composition to Jupiter, and is the second-largest planet in our
+                Solar System.
+            </p>
+            <p class="mb-4">
+                Saturn has a unique atmosphere, with swirling clouds and storms that
+                can reach speeds of up to 1,100 miles per hour (1,800 kilometers per
+                hour). The planet is also home to many moons, with over 80 known
+                satellites in orbit around it. Titan, one of Saturn's largest moons,
+                is of particular interest to scientists because it is the only moon
+                in the Solar System with a dense atmosphere.
+            </p>
+            <p class="mb-4">
+                The rings of Saturn are one of the planet's most striking features.
+                They are made up of millions of individual particles, ranging in
+                size from tiny dust particles to large boulders. The rings are
+                believed to be the remnants of a moon or other object that was
+                destroyed by Saturn's gravity.
+            </p>
+            <p class="mb-4">
+                Saturn has been visited by several spacecraft, including NASA's
+                Cassini mission, which orbited the planet for 13 years before
+                intentionally crashing into Saturn in 2017. The mission provided
+                scientists with valuable data and insights into the planet's
+                atmosphere, rings, and moons.
+            </p>
+            <p class="mb-4">
+                In addition to its scientific significance, Saturn is also a popular
+                target for amateur astronomers due to its beauty and prominent
+                rings. The planet is visible to the naked eye from Earth and can be
+                observed through a telescope or binoculars.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Uranus -->
-                <section id="uranus" class="panel col-span-12 md:col-span-6 md:col-start-1">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Uranus</h2>
-                    <p class="mb-4">
-                        Uranus is the seventh planet from the Sun and is the third-largest
-                        planet in our Solar System. It is an ice giant planet, with a
-                        composition that is different from the gas giants Jupiter and
-                        Saturn. Uranus is unique in that its axis of rotation is tilted at
-                        an extreme angle, nearly 98 degrees, causing its north and south
-                        poles to point almost directly at the Sun at different times of the
-                        year.
-                    </p>
-                    <p class="mb-4">
-                        Uranus has a blue-green color, caused by the presence of methane in
-                        its atmosphere. The planet is also home to at least 27 known moons,
-                        the largest of which is Titania. Uranus also has a system of rings,
-                        which were discovered in 1977 by astronomers observing the planet
-                        from Earth.
-                    </p>
-                    <p class="mb-4">
-                        Uranus has been visited by only one spacecraft, NASA's Voyager 2,
-                        which flew by the planet in 1986. The mission provided valuable data
-                        and insights into the planet's atmosphere, rings, and moons,
-                        including the discovery of ten new moons that had not been
-                        previously observed.
-                    </p>
-                    <p class="mb-4">
-                        One of the most interesting features of Uranus is its extreme axial
-                        tilt. This tilt is thought to have been caused by a collision with a
-                        large object early in the planet's history. The extreme tilt also
-                        causes strange seasonal variations on the planet, with each pole
-                        experiencing 42 years of continuous sunlight and 42 years of
-                        continuous darkness during the planet's 84-year orbit around the
-                        Sun.
-                    </p>
-                </section>
+        <!-- Uranus -->
+        <section id="uranus" class="panel col-span-12 md:col-span-6 md:col-start-1">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Uranus</h2>
+            <p class="mb-4">
+                Uranus is the seventh planet from the Sun and is the third-largest
+                planet in our Solar System. It is an ice giant planet, with a
+                composition that is different from the gas giants Jupiter and
+                Saturn. Uranus is unique in that its axis of rotation is tilted at
+                an extreme angle, nearly 98 degrees, causing its north and south
+                poles to point almost directly at the Sun at different times of the
+                year.
+            </p>
+            <p class="mb-4">
+                Uranus has a blue-green color, caused by the presence of methane in
+                its atmosphere. The planet is also home to at least 27 known moons,
+                the largest of which is Titania. Uranus also has a system of rings,
+                which were discovered in 1977 by astronomers observing the planet
+                from Earth.
+            </p>
+            <p class="mb-4">
+                Uranus has been visited by only one spacecraft, NASA's Voyager 2,
+                which flew by the planet in 1986. The mission provided valuable data
+                and insights into the planet's atmosphere, rings, and moons,
+                including the discovery of ten new moons that had not been
+                previously observed.
+            </p>
+            <p class="mb-4">
+                One of the most interesting features of Uranus is its extreme axial
+                tilt. This tilt is thought to have been caused by a collision with a
+                large object early in the planet's history. The extreme tilt also
+                causes strange seasonal variations on the planet, with each pole
+                experiencing 42 years of continuous sunlight and 42 years of
+                continuous darkness during the planet's 84-year orbit around the
+                Sun.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Neptune -->
-                <section id="neptune" class="panel col-span-12 md:col-span-6 md:col-start-7">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Neptune</h2>
-                    <p class="mb-4">
-                        Neptune is the eighth and farthest known planet from the Sun, and
-                        the fourth-largest planet in our Solar System. It is an ice giant
-                        planet, similar in composition to Uranus. The planet was discovered
-                        in 1846 after astronomers observed small perturbations in the orbit
-                        of Uranus, leading to the prediction of the existence of another
-                        planet beyond it.
-                    </p>
-                    <p class="mb-4">
-                        Neptune has a blue color, caused by the presence of methane in its
-                        atmosphere, which absorbs red light and reflects blue light. The
-                        planet is also home to at least 14 known moons, the largest of which
-                        is Triton. Triton is of particular interest to scientists because it
-                        is the coldest known object in the Solar System, with surface
-                        temperatures that can drop as low as -235 degrees Celsius (-391
-                        degrees Fahrenheit).
-                    </p>
-                    <p class="mb-4">
-                        Neptune also has a system of rings, which were discovered in 1989 by
-                        the Voyager 2 spacecraft, the only spacecraft to have visited the
-                        planet. The rings are believed to be made up of dust particles and
-                        small rocks, and are much fainter than those of Saturn or Uranus.
-                    </p>
-                    <p class="mb-4">
-                        Neptune is a dynamic planet with strong winds and storms, including
-                        the Great Dark Spot, a massive storm system that was observed in the
-                        planet's southern hemisphere in the late 1980s. The storm has since
-                        disappeared, but other storm systems have been observed on the
-                        planet.
-                    </p>
-                </section>
+        <!-- Neptune -->
+        <section id="neptune" class="panel col-span-12 md:col-span-6 md:col-start-7">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Neptune</h2>
+            <p class="mb-4">
+                Neptune is the eighth and farthest known planet from the Sun, and
+                the fourth-largest planet in our Solar System. It is an ice giant
+                planet, similar in composition to Uranus. The planet was discovered
+                in 1846 after astronomers observed small perturbations in the orbit
+                of Uranus, leading to the prediction of the existence of another
+                planet beyond it.
+            </p>
+            <p class="mb-4">
+                Neptune has a blue color, caused by the presence of methane in its
+                atmosphere, which absorbs red light and reflects blue light. The
+                planet is also home to at least 14 known moons, the largest of which
+                is Triton. Triton is of particular interest to scientists because it
+                is the coldest known object in the Solar System, with surface
+                temperatures that can drop as low as -235 degrees Celsius (-391
+                degrees Fahrenheit).
+            </p>
+            <p class="mb-4">
+                Neptune also has a system of rings, which were discovered in 1989 by
+                the Voyager 2 spacecraft, the only spacecraft to have visited the
+                planet. The rings are believed to be made up of dust particles and
+                small rocks, and are much fainter than those of Saturn or Uranus.
+            </p>
+            <p class="mb-4">
+                Neptune is a dynamic planet with strong winds and storms, including
+                the Great Dark Spot, a massive storm system that was observed in the
+                planet's southern hemisphere in the late 1980s. The storm has since
+                disappeared, but other storm systems have been observed on the
+                planet.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Ceres -->
-                <section id="ceres" class="panel col-span-12 md:col-span-6 md:col-start-1">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Ceres</h2>
-                    <p class="mb-4">
-                        Ceres is a dwarf planet located in the asteroid belt, a region of
-                        the Solar System between the orbits of Mars and Jupiter. It was
-                        discovered in 1801 by Italian astronomer Giuseppe Piazzi and is the
-                        largest object in the asteroid belt, accounting for about one third
-                        of its total mass.
-                    </p>
-                    <p class="mb-4">
-                        Ceres has a diameter of about 940 kilometers (585 miles) and is
-                        composed of rock and ice. Its surface is heavily cratered, and it
-                        has several large mountains, including Ahuna Mons, a tall volcanic
-                        mountain that is the largest such feature in the Solar System.
-                    </p>
-                    <p class="mb-4">
-                        Ceres is also home to many bright spots, which were first observed
-                        by the Dawn spacecraft, the only spacecraft to have visited the
-                        dwarf planet. The bright spots are believed to be deposits of salt
-                        or other reflective materials, and may be evidence of past or
-                        present geological activity on the planet.
-                    </p>
-                    <p class="mb-4">
-                        One of the most interesting aspects of Ceres is its potential as a
-                        source of resources for future space missions. The dwarf planet is
-                        believed to contain significant amounts of water ice, which could be
-                        used to produce fuel or to support human exploration and habitation
-                        of space.
-                    </p>
-                    <p class="mb-4">
-                        Ceres has no known moons, and its orbit is relatively stable,
-                        although it does occasionally come close to other objects in the
-                        asteroid belt.
-                    </p>
-                </section>
+        <!-- Ceres -->
+        <section id="ceres" class="panel col-span-12 md:col-span-6 md:col-start-1">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Ceres</h2>
+            <p class="mb-4">
+                Ceres is a dwarf planet located in the asteroid belt, a region of
+                the Solar System between the orbits of Mars and Jupiter. It was
+                discovered in 1801 by Italian astronomer Giuseppe Piazzi and is the
+                largest object in the asteroid belt, accounting for about one third
+                of its total mass.
+            </p>
+            <p class="mb-4">
+                Ceres has a diameter of about 940 kilometers (585 miles) and is
+                composed of rock and ice. Its surface is heavily cratered, and it
+                has several large mountains, including Ahuna Mons, a tall volcanic
+                mountain that is the largest such feature in the Solar System.
+            </p>
+            <p class="mb-4">
+                Ceres is also home to many bright spots, which were first observed
+                by the Dawn spacecraft, the only spacecraft to have visited the
+                dwarf planet. The bright spots are believed to be deposits of salt
+                or other reflective materials, and may be evidence of past or
+                present geological activity on the planet.
+            </p>
+            <p class="mb-4">
+                One of the most interesting aspects of Ceres is its potential as a
+                source of resources for future space missions. The dwarf planet is
+                believed to contain significant amounts of water ice, which could be
+                used to produce fuel or to support human exploration and habitation
+                of space.
+            </p>
+            <p class="mb-4">
+                Ceres has no known moons, and its orbit is relatively stable,
+                although it does occasionally come close to other objects in the
+                asteroid belt.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Eris -->
-                <section id="eris" class="panel col-span-12 md:col-span-6 md:col-start-7">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Eris</h2>
-                    <p class="mb-4">
-                        Eris is a dwarf planet located in the Kuiper Belt, a region of the
-                        Solar System beyond the orbit of Neptune that is home to many small,
-                        icy objects. It was discovered in 2005 by a team of astronomers led
-                        by Mike Brown, and is named after the Greek goddess of strife and
-                        discord.
-                    </p>
-                    <p class="mb-4">
-                        Eris is one of the largest known dwarf planets, with a diameter of
-                        about 2,326 kilometers (1,445 miles). It is composed mainly of rock
-                        and ice, and has a highly elliptical orbit that takes it from about
-                        5.7 billion kilometers (3.5 billion miles) from the Sun at its
-                        farthest point, to about 9 billion kilometers (5.6 billion miles) at
-                        its closest point.
-                    </p>
-                    <p class="mb-4">
-                        One of the most interesting features of Eris is its highly
-                        reflective surface, which indicates the presence of a layer of frost
-                        on its surface. Eris also has a small moon called Dysnomia, which
-                        was named after the daughter of Eris in Greek mythology.
-                    </p>
-                    <p class="mb-4">
-                        Eris is notable for its role in the reclassification of Pluto as a
-                        dwarf planet. Its discovery, along with other large objects in the
-                        Kuiper Belt, led astronomers to rethink their definition of a planet
-                        and ultimately led to the reclassification of Pluto.
-                    </p>
-                    <p class="mb-4">
-                        Eris is too far from the Sun to be visited by any spacecraft in the
-                        near future, but continued study of the dwarf planet and its
-                        neighbors in the Kuiper Belt may reveal more about the formation and
-                        evolution of the Solar System.
-                    </p>
-                </section>
+        <!-- Eris -->
+        <section id="eris" class="panel col-span-12 md:col-span-6 md:col-start-7">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Eris</h2>
+            <p class="mb-4">
+                Eris is a dwarf planet located in the Kuiper Belt, a region of the
+                Solar System beyond the orbit of Neptune that is home to many small,
+                icy objects. It was discovered in 2005 by a team of astronomers led
+                by Mike Brown, and is named after the Greek goddess of strife and
+                discord.
+            </p>
+            <p class="mb-4">
+                Eris is one of the largest known dwarf planets, with a diameter of
+                about 2,326 kilometers (1,445 miles). It is composed mainly of rock
+                and ice, and has a highly elliptical orbit that takes it from about
+                5.7 billion kilometers (3.5 billion miles) from the Sun at its
+                farthest point, to about 9 billion kilometers (5.6 billion miles) at
+                its closest point.
+            </p>
+            <p class="mb-4">
+                One of the most interesting features of Eris is its highly
+                reflective surface, which indicates the presence of a layer of frost
+                on its surface. Eris also has a small moon called Dysnomia, which
+                was named after the daughter of Eris in Greek mythology.
+            </p>
+            <p class="mb-4">
+                Eris is notable for its role in the reclassification of Pluto as a
+                dwarf planet. Its discovery, along with other large objects in the
+                Kuiper Belt, led astronomers to rethink their definition of a planet
+                and ultimately led to the reclassification of Pluto.
+            </p>
+            <p class="mb-4">
+                Eris is too far from the Sun to be visited by any spacecraft in the
+                near future, but continued study of the dwarf planet and its
+                neighbors in the Kuiper Belt may reveal more about the formation and
+                evolution of the Solar System.
+            </p>
+        </section>
 
-                <div class="col-span-12 h-[200vh]"></div>
+        <div class="col-span-12 h-[200vh]"></div>
 
-                <!-- Pluto -->
-                <section id="pluto" class="panel col-span-12 md:col-span-6 md:col-start-1">
-                    <h2 class="text-3xl md:text-5xl my-4 text-center">Pluto</h2>
-                    <p class="mb-4">
-                        Pluto is a dwarf planet located in the Kuiper Belt, a region of the
-                        Solar System beyond the orbit of Neptune that is home to many small,
-                        icy objects. Discovered in 1930, Pluto was long considered the ninth
-                        planet in our Solar System, but was reclassified as a dwarf planet
-                        in 2006 due to its small size and other characteristics.
-                    </p>
-                    <p class="mb-4">
-                        Pluto is a relatively small world, with a diameter of about 2,377
-                        kilometers (1,477 miles). It is composed mainly of rock and ice, and
-                        has a highly elliptical orbit that takes it from about 4.4 billion
-                        kilometers (2.7 billion miles) from the Sun at its farthest point,
-                        to about 4.4 billion kilometers (2.7 billion miles) at its closest
-                        point.
-                    </p>
-                    <p class="mb-4">
-                        One of the most interesting features of Pluto is its complex surface,
-                        which includes plains, mountains, and canyons, as well as a large
-                        heart-shaped region called Tombaugh Regio, named after the
-                        astronomer who discovered the planet. The heart-shaped region is
-                        made up of a bright, icy material, while the rest of the planet's
-                        surface is covered in darker material.
-                    </p>
-                    <p class="mb-4">
-                        Pluto has five known moons, the largest of which is Charon, which is
-                        about half the size of Pluto. The other four moons are much smaller
-                        and were discovered in 2005-2012.
-                    </p>
-                    <p class="mb-4">
-                        Pluto has been visited by only one spacecraft, NASA's New Horizons,
-                        which flew by the planet in 2015. The mission provided the first
-                        close-up images of the planet and its moons, and revealed many new
-                        details about the world, including the presence of ice volcanoes and
-                        a hazy atmosphere.
-                    </p>
-                </section>
-            </div>
-        </main>
-    </body>
+        <!-- Pluto -->
+        <section id="pluto" class="panel col-span-12 md:col-span-6 md:col-start-1">
+            <h2 class="text-3xl md:text-5xl my-4 text-center">Pluto</h2>
+            <p class="mb-4">
+                Pluto is a dwarf planet located in the Kuiper Belt, a region of the
+                Solar System beyond the orbit of Neptune that is home to many small,
+                icy objects. Discovered in 1930, Pluto was long considered the ninth
+                planet in our Solar System, but was reclassified as a dwarf planet
+                in 2006 due to its small size and other characteristics.
+            </p>
+            <p class="mb-4">
+                Pluto is a relatively small world, with a diameter of about 2,377
+                kilometers (1,477 miles). It is composed mainly of rock and ice, and
+                has a highly elliptical orbit that takes it from about 4.4 billion
+                kilometers (2.7 billion miles) from the Sun at its farthest point,
+                to about 4.4 billion kilometers (2.7 billion miles) at its closest
+                point.
+            </p>
+            <p class="mb-4">
+                One of the most interesting features of Pluto is its complex surface,
+                which includes plains, mountains, and canyons, as well as a large
+                heart-shaped region called Tombaugh Regio, named after the
+                astronomer who discovered the planet. The heart-shaped region is
+                made up of a bright, icy material, while the rest of the planet's
+                surface is covered in darker material.
+            </p>
+            <p class="mb-4">
+                Pluto has five known moons, the largest of which is Charon, which is
+                about half the size of Pluto. The other four moons are much smaller
+                and were discovered in 2005-2012.
+            </p>
+            <p class="mb-4">
+                Pluto has been visited by only one spacecraft, NASA's New Horizons,
+                which flew by the planet in 2015. The mission provided the first
+                close-up images of the planet and its moons, and revealed many new
+                details about the world, including the presence of ice volcanoes and
+                a hazy atmosphere.
+            </p>
+        </section>
+    </div>
+</main>
+</body>
 </html>

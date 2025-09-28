@@ -1,4 +1,4 @@
-import * as THREE from './three.module.js';
+import * as THREE from 'three';
 
 const scene = new THREE.Scene();
 
@@ -97,7 +97,7 @@ var frame = 0;
 function getRotation (frame, period) {
     // takes period rate in days/rotation
     // 1 second = 7 days
-    let rotation = frame / 60 / period * 2 * 3.141592653589793238;
+    let rotation = frame / 3600 / period * 2 * 3.141592653589793238;
     return(rotation);
 }
 
