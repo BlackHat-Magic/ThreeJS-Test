@@ -1,138 +1,39 @@
-* {
-    font-family: "noto-sans", sans-serif, serif;
-    max-width: 100%;
+@import "tailwindcss";
+
+/* Tell Tailwind where your source files are (v4). This makes detection work well with Flask/Jinja. */
+@import "tailwindcss" source("../../templates");
+
+/* Nord-like theme tokens mapped to Tailwind color names you can use like bg-canvas, text-text, etc. */
+@theme {
+    --color-background: #242933;
+    --color-canvas: #2e3440;
+    --color-inactive: #3b4252;
+    --color-active: #434c5e;
+    --color-nord3: #4c566a;
+
+    --color-text: #d8dee9;
+    --color-subtle: #e5e9f0;
+    --color-important: #eceff4;
+
+    --color-primary1: #88c0d0;
+    --color-primary2: #8fbcbb;
+    --color-secondary: #81a1c1;
+    --color-tertiary: #5e81ac;
+
+    --color-red: #bf616a;
+    --color-dark-red: #bf3035;
+    --color-orange: #d08770;
+    --color-yellow: #ebcb8b;
+    --color-green: #a3be8c;
+    --color-purple: #b48ead;
 }
 
-:root {
-    --nord-background: #242933;
-    --nord-canvas: #2E3440;
-    --nord-inactive: #3B4252;
-    --nord-active: #434C5e;
-    --nord3: #4C566A;
-
-    --nord-text: #D8DEE9;
-    --nord-subtle: #E5E9F0;
-    --nord-important: #ECEFF4;
-
-    --nord-primary2: #8FBCBB;
-    --nord-primary1: #88C0D0;
-    --nord-secondary: #81A1C1;
-    --nord-tertiary: #5E81AC;
-
-    --nord-red: #BF616A;
-    --nord-dark-red: #BF3035;
-    --nord-orange: #D08770;
-    --nord-yellow: #EBCB8B;
-    --nord-green: #A3BE8C;
-    --nord-purple: #B48EAD;
+/* Optional: any tiny global tweaks you still want */
+::selection {
+    background: var(--color-purple);
+    color: var(--color-important);
 }
 
-::selection, ::-moz-selection {
-    background: var(--nord-purple);
-    color: var(--nord-important);
-}
-
-body {
-    text-align: left;
-    color: var(--nord-text);
-    background-color: var(--nord-background);
-    margin: 0;
-    padding: auto;
-    height: 100%
-}
-
-footer,footer a {
-    text-align: center;
-    color: var(--nord-subtle);
-    text-decoration: none;
-}
-
-footer a:hover {
-    color: var(--nord-important)
-}
-
-template, template.vertical, template.horizontal {
-    height: 0;
-    padding: 0;
-    border: 0;
-    margin: 0;
-}
-
-.red {
-    background-color: var(--nord-red);
-}
-.orange {
-    background-color: var(--nord-orange);
-}
-.green {
-    background-color: var(--nord-green);
-}
-.red.text, .orange.text, .green.text {
-    border-radius: 5px;
-    padding: 5px;
-    text-align: center;
-}
-.red.bar, .orange.bar, .green.bar {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    border-radius: 0;
-}
-.red.bar *, .orange.bar *, .green.bar * {
-    text-align: center;
-    margin: 14px 16px;
-}
-
-/* TABLES */
-td {
-    font-size: 14px;
-}
-
-td a {
-    color: var(--nord-text);
-    text-decoration: none;
-}
-
-table, th, td {
-    border: 1px solid var(--nord-active);
-    background-color: var(--nord-inactive);
-    border-collapse: collapse;
-    margin: 12px;
-    padding: 14px;
-}
-
-th {
-    font-size: 16px;
-}
-
-table {
-    padding: 0;
-    width: 100%;
-}
-
-
-div.wide-content * *, div.wide-content * {
-    width: 100%
-}
-
-.inline {
-    display: inline-block;
-}
-
-.small, .small * {
-    font-size: 12px;
-    color: var(--nord-subtle);
-}
-
-.passwdmismatch {
-    border-color: var(--nord-red);
-}
-
-.hidden {
-    display: none;
-}
-
-a:hover, a:hover span {
-    color: var(--nord-tertiary);
-    cursor: pointer;
+@utility panel {
+    @apply rounded-xl bg-canvas/80 p-6 backdrop-blur;
 }

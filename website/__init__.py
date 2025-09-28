@@ -1,12 +1,10 @@
-from flask import Flask
-from os import path
-# import json
+from flask import Flask, render_template
 
 def start():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="static", template_folder="templates")
 
-    from .epmain import epmain
-
-    app.register_blueprint(epmain, url_prefix="/")
+    @app.route("/")
+    def home():
+        return render_template("index.html", title="Home")
 
     return app
