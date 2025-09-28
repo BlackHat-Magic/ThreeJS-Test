@@ -1,2 +1,3 @@
-website/static/js/OrbitControls.js
-website/static/js/three.module.js
+**/three.*.js
+**/__pycache__
+**/env/
