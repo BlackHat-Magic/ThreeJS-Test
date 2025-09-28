@@ -11,7 +11,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-COPY website/static/js/three.*.js ./website/static/js/
 
 EXPOSE 8000
 
