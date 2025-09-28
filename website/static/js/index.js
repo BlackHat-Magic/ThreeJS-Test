@@ -143,7 +143,6 @@ function cameraOffset (position, radius, leftright) {
     }
     offset.x += unitvector.z;
     offset.z += unitvector.x;
-    console.log(Math.sqrt(offset.x * offset.x + offset.z * offset.z))
 
     return(offset);
 }

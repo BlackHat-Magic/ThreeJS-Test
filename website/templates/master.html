@@ -10,10 +10,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/input.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/containers.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/ui.css') }}">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">	
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
 	<script src="{{ url_for('static', filename='js/master.js') }}"></script>
 	<title>{{ title }} | Three.js test</title>
 	<base href=".">
@@ -21,32 +18,6 @@
 </head>
 
 <body>
-<ul class="transparent fixed nav">
-	<li id="nav-home" class="nav-item"><a href="/">Home</a></li>
-	<li id="nav-char" class="active dropdown nav-item">
-		<a href="#" class="dropbtn">Stuff</a>
-		<div class="dropdown-content">
-			<a href="#">Test</a>
-		</div>
-	</li>
-	<li id="nav-login" class="nav-right">
-		<a id="login-link" href="#">Right</a>
-	</li>
-</ul>
-
-
-{% with messages = get_flashed_messages(with_categories=false) %}
-	{% if messages %}
-		{% for message in messages %}
-			<div class="interior flex horizontal center red bar">
-				<span>{{ message }}</span>
-			</div>
-		{% endfor %}
-	{% endif %}
-{% endwith %}
-
-<div id="jsflash">
-</div>
 {% block body %}{% endblock %}
 </body>
 </html>
