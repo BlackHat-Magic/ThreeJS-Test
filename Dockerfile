@@ -1,3 +1,23 @@
+# build step
+FROM node:24.8.0-alpine3.21 AS assets
+
+WORKDIR /build
+
+COPY package*.json .
+RUN npm ci
+
+COPY templates/ ./templates
+COPY static/js ./static/js
+COPY static/css ./static/css
+
+RUN mkdir -p static/dist
+
+RUN npx @tailwindcss/cli \
+    -i ./static/css/main.css \
+    -o ./static/dist/main.css \
+    --minify
+
+# runtime
 FROM python:3.13.7-slim-bookworm
 
 RUN apt-get update && \
@@ -11,6 +31,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+COPY --from=assets /build/static/dist/main.css ./static/dist/main.css
 
 EXPOSE 8000
 

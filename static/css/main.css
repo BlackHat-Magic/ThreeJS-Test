@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* Tell Tailwind where your source files are (v4). This makes detection work well with Flask/Jinja. */
+@import "tailwindcss" source("../../templates");
+
+/* Nord-like theme tokens mapped to Tailwind color names you can use like bg-canvas, text-text, etc. */
+@theme {
+    --color-background: #242933;
+    --color-canvas: #2e3440;
+    --color-inactive: #3b4252;
+    --color-active: #434c5e;
+    --color-nord3: #4c566a;
+
+    --color-text: #d8dee9;
+    --color-subtle: #e5e9f0;
+    --color-important: #eceff4;
+
+    --color-primary1: #88c0d0;
+    --color-primary2: #8fbcbb;
+    --color-secondary: #81a1c1;
+    --color-tertiary: #5e81ac;
+
+    --color-red: #bf616a;
+    --color-dark-red: #bf3035;
+    --color-orange: #d08770;
+    --color-yellow: #ebcb8b;
+    --color-green: #a3be8c;
+    --color-purple: #b48ead;
+}
+
+/* Optional: any tiny global tweaks you still want */
+::selection {
+    background: var(--color-purple);
+    color: var(--color-important);
+}
+
+@utility panel {
+    @apply rounded-xl bg-canvas/80 p-6 backdrop-blur;
+}
