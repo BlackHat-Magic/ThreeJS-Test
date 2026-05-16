@@ -102,29 +102,49 @@ const neptune = createPlanet('neptune', 3.86046, "/static/img/2k_neptune.jpg", 2
 const pluto = createPlanet('pluto', 0.1868, "/static/img/pluto.webp", 270, 90560, -6.387230);
 
 const saturnRingGeometry = new THREE.RingGeometry(11, 18, 64);
-const saturnRingMaterial = new THREE.MeshBasicMaterial({
+const saturnRingMaterial = new THREE.MeshStandardMaterial({
     color: 0xc4b696,
     side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0.6
+    opacity: 0.7,
+    roughness: 0.7,
+    metalness: 0.1
 });
 const saturnRing = new THREE.Mesh(saturnRingGeometry, saturnRingMaterial);
 saturnRing.rotation.x = Math.PI / 2.5;
 scene.add(saturnRing);
 
 const uranusRingGeometry = new THREE.RingGeometry(5, 6.5, 64);
-const uranusRingMaterial = new THREE.MeshBasicMaterial({
+const uranusRingMaterial = new THREE.MeshStandardMaterial({
     color: 0x88aacc,
     side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0.25
+    opacity: 0.35,
+    roughness: 0.7,
+    metalness: 0.1
 });
 const uranusRing = new THREE.Mesh(uranusRingGeometry, uranusRingMaterial);
 uranusRing.rotation.x = Math.PI / 2;
 uranusRing.rotation.z = Math.PI / 12;
 scene.add(uranusRing);
 
-const ambientlight = new THREE.AmbientLight(0x404060, 0.15);
+function createCircleTexture() {
+    const size = 64;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    gradient.addColorStop(0, 'rgba(255,255,255,1)');
+    gradient.addColorStop(0.3, 'rgba(255,255,255,0.8)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+    const texture = new THREE.CanvasTexture(canvas);
+    return texture;
+}
+
+const ambientlight = new THREE.AmbientLight(0x404060, 0.35);
 scene.add(ambientlight);
 
 const light = new THREE.PointLight(0xfff5e6, 2, 10000, 0.5);
@@ -149,12 +169,13 @@ dustGeometry.setAttribute('size', new THREE.BufferAttribute(dustSizes, 1));
 
 const dustMaterial = new THREE.PointsMaterial({
     color: 0xaabbcc,
-    size: 0.3,
+    size: 0.12,
     transparent: true,
-    opacity: 0.4,
+    opacity: 0.35,
     sizeAttenuation: true,
     blending: THREE.AdditiveBlending,
-    depthWrite: false
+    depthWrite: false,
+    map: createCircleTexture()
 });
 const dustParticles = new THREE.Points(dustGeometry, dustMaterial);
 scene.add(dustParticles);
@@ -172,10 +193,11 @@ for (let i = 0; i < asteroidBeltCount; i++) {
 asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPositions, 3));
 const asteroidMaterial = new THREE.PointsMaterial({
     color: 0x888888,
-    size: 0.4,
+    size: 0.15,
     transparent: true,
-    opacity: 0.5,
-    sizeAttenuation: true
+    opacity: 0.4,
+    sizeAttenuation: true,
+    map: createCircleTexture()
 });
 const asteroidBelt = new THREE.Points(asteroidGeometry, asteroidMaterial);
 scene.add(asteroidBelt);
