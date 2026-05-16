@@ -1,396 +1,365 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01,10000);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 10000);
 
 const renderer = new THREE.WebGLRenderer({
-    canvas: document.querySelector("#canvas")
-})
-renderer.setPixelRatio(window.devicePixelRatio);
+    canvas: document.querySelector("#canvas"),
+    antialias: true
+});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.render(scene, camera);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
 
 const skyboxtexture = new THREE.TextureLoader().load('/static/img/8k_stars.jpg');
 scene.background = skyboxtexture;
 
-// PRAISE THE SUN \[T]/
-const sungeometry = new THREE.SphereGeometry(22.70340, 64, 32)
-const suntexture = new THREE.TextureLoader().load("/static/img/2k_sun.jpg")
-const sunmaterial = new THREE.MeshBasicMaterial({map: suntexture})
-const sun = new THREE.Mesh(sungeometry, sunmaterial)
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    1.5,
+    0.4,
+    0.75
+);
+composer.addPass(bloomPass);
+
+const outputPass = new OutputPass();
+composer.addPass(outputPass);
+
+const sungeometry = new THREE.SphereGeometry(22.70340, 64, 32);
+const suntexture = new THREE.TextureLoader().load("/static/img/2k_sun.jpg");
+const sunmaterial = new THREE.MeshBasicMaterial({ map: suntexture });
+const sun = new THREE.Mesh(sungeometry, sunmaterial);
 scene.add(sun);
 
-// Hermes
-const mercurygeometry = new THREE.SphereGeometry(0.39615, 32, 16);
-const mercurytexture = new THREE.TextureLoader().load("/static/img/2k_mercury.jpg");
-const mercurymaterial = new THREE.MeshStandardMaterial({map: mercurytexture});
-const mercury = new THREE.Mesh(mercurygeometry, mercurymaterial);
-scene.add(mercury);
+const sunglowgeometry = new THREE.SphereGeometry(25, 32, 16);
+const sunglowmaterial = new THREE.MeshBasicMaterial({
+    color: 0xffaa33,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.BackSide
+});
+const sunglow = new THREE.Mesh(sunglowgeometry, sunglowmaterial);
+scene.add(sunglow);
 
-// Aphrodite
-const venusgeometry = new THREE.SphereGeometry(0.94985, 32, 16);
-const venustexture = new THREE.TextureLoader().load("/static/img/2.5k_venus.jpg");
-const venusmaterial = new THREE.MeshStandardMaterial({map:venustexture});
-const venus = new THREE.Mesh(venusgeometry, venusmaterial);
-scene.add(venus);
+const planets = [];
 
-// Gaia
-const earthgeometry = new THREE.SphereGeometry(1, 32, 16);
-const earthtexture = new THREE.TextureLoader().load("/static/img/2.5k_earth.jpg");
-const earthmaterial = new THREE.MeshStandardMaterial({map:earthtexture});
-const earth = new THREE.Mesh(earthgeometry, earthmaterial);
-scene.add(earth);
+function createPlanet(name, radius, texturePath, orbitRadius, orbitPeriod, rotationPeriod) {
+    const geometry = new THREE.SphereGeometry(radius, 64, 32);
+    const texture = new THREE.TextureLoader().load(texturePath);
+    const material = new THREE.MeshStandardMaterial({
+        map: texture,
+        roughness: 0.8,
+        metalness: 0.1
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
 
-// ares
-const marsgeometry = new THREE.SphereGeometry(0.53242, 32, 16);
-const marstexture = new THREE.TextureLoader().load("/static/img/2.5k_mars.jpg");
-const marsmaterial = new THREE.MeshStandardMaterial({map:marstexture});
-const mars = new THREE.Mesh(marsgeometry, marsmaterial);
-scene.add(mars);
+    const orbitLineGeometry = new THREE.BufferGeometry();
+    const orbitPoints = [];
+    for (let i = 0; i <= 128; i++) {
+        const angle = (i / 128) * Math.PI * 2;
+        orbitPoints.push(Math.cos(angle) * orbitRadius, 0, Math.sin(angle) * orbitRadius * -1);
+    }
+    orbitLineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(orbitPoints, 3));
+    const orbitLineMaterial = new THREE.LineBasicMaterial({
+        color: 0x4c566a,
+        transparent: true,
+        opacity: 0.2
+    });
+    const orbitLine = new THREE.Line(orbitLineGeometry, orbitLineMaterial);
+    scene.add(orbitLine);
 
-// zeus
-const jupitergeometry = new THREE.SphereGeometry(11.3517, 32, 16);
-const jupitertexture = new THREE.TextureLoader().load("/static/img/2.5k_jupiter.jpg");
-const jupitermaterial = new THREE.MeshStandardMaterial({map:jupitertexture});
-const jupiter = new THREE.Mesh(jupitergeometry, jupitermaterial);
-scene.add(jupiter);
+    const planetData = {
+        mesh,
+        radius,
+        orbitRadius,
+        orbitPeriod,
+        rotationPeriod,
+        orbitLine
+    };
+    planets.push(planetData);
+    return planetData;
+}
 
-// Cronus
-const saturngeometry = new THREE.SphereGeometry(9.1402, 32, 16);
-const saturntexture = new THREE.TextureLoader().load("/static/img/2.5k_saturn.jpg");
-const saturnmaterial = new THREE.MeshStandardMaterial({map:saturntexture});
-const saturn = new THREE.Mesh(saturngeometry, saturnmaterial);
-scene.add(saturn);
+const mercury = createPlanet('mercury', 0.39615, "/static/img/2k_mercury.jpg", 40, 87.97, 59);
+const venus = createPlanet('venus', 0.94985, "/static/img/2.5k_venus.jpg", 60, 224.7, -116.75);
+const earth = createPlanet('earth', 1, "/static/img/2.5k_earth.jpg", 90, 365.249, 1);
+const mars = createPlanet('mars', 0.53242, "/static/img/2.5k_mars.jpg", 120, 686.98, 1.025957);
+const jupiter = createPlanet('jupiter', 11.3517, "/static/img/2.5k_jupiter.jpg", 150, 4332.59, 0.41354);
+const saturn = createPlanet('saturn', 9.1402, "/static/img/2.5k_saturn.jpg", 180, 10759.22, 0.44002);
+const uranus = createPlanet('uranus', 3.97648, "/static/img/2k_uranus.jpg", 210, 30688, 0.71833);
+const neptune = createPlanet('neptune', 3.86046, "/static/img/2k_neptune.jpg", 240, 60190, 0.6713);
+const pluto = createPlanet('pluto', 0.1868, "/static/img/pluto.webp", 270, 90560, -6.387230);
 
-// Caelus
-const uranusgeometry = new THREE.SphereGeometry(3.97648, 32, 16);
-const uranustexture = new THREE.TextureLoader().load("/static/img/2k_uranus.jpg");
-const uranusmaterial = new THREE.MeshStandardMaterial({map:uranustexture});
-const uranus = new THREE.Mesh(uranusgeometry, uranusmaterial);
-scene.add(uranus);
+const saturnRingGeometry = new THREE.RingGeometry(11, 18, 64);
+const saturnRingMaterial = new THREE.MeshBasicMaterial({
+    color: 0xc4b696,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.6
+});
+const saturnRing = new THREE.Mesh(saturnRingGeometry, saturnRingMaterial);
+saturnRing.rotation.x = Math.PI / 2.5;
+scene.add(saturnRing);
 
-// Poseidon
-const neptunegeometry = new THREE.SphereGeometry(3.86046, 32, 16);
-const neptunetexture = new THREE.TextureLoader().load("/static/img/2k_neptune.jpg");
-const neptunematerial = new THREE.MeshStandardMaterial({map:neptunetexture});
-const neptune = new THREE.Mesh(neptunegeometry, neptunematerial);
-scene.add(neptune);
+const uranusRingGeometry = new THREE.RingGeometry(5, 6.5, 64);
+const uranusRingMaterial = new THREE.MeshBasicMaterial({
+    color: 0x88aacc,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.25
+});
+const uranusRing = new THREE.Mesh(uranusRingGeometry, uranusRingMaterial);
+uranusRing.rotation.x = Math.PI / 2;
+uranusRing.rotation.z = Math.PI / 12;
+scene.add(uranusRing);
 
-// Hades
-const plutogeometry = new THREE.SphereGeometry(0.1868, 32, 16);
-const plutotexture = new THREE.TextureLoader().load("/static/img/pluto.webp");
-const plutomaterial = new THREE.MeshStandardMaterial({map:plutotexture});
-const pluto = new THREE.Mesh(plutogeometry, plutomaterial);
-scene.add(pluto);
-
-const ambientlight = new THREE.AmbientLight(0xFFEEEE, 0.1)
+const ambientlight = new THREE.AmbientLight(0x404060, 0.15);
 scene.add(ambientlight);
 
-const light = new THREE.PointLight(0xFFEEEE, 1, 10000);
+const light = new THREE.PointLight(0xfff5e6, 2, 10000, 0.5);
 light.position.set(0, 0, 0);
 scene.add(light);
 
+const dustParticleCount = 5000;
+const dustGeometry = new THREE.BufferGeometry();
+const dustPositions = new Float32Array(dustParticleCount * 3);
+const dustSizes = new Float32Array(dustParticleCount);
+for (let i = 0; i < dustParticleCount; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const r = 30 + Math.random() * 280;
+    dustPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+    dustPositions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+    dustPositions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+    dustSizes[i] = Math.random() * 1.5 + 0.5;
+}
+dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+dustGeometry.setAttribute('size', new THREE.BufferAttribute(dustSizes, 1));
+
+const dustMaterial = new THREE.PointsMaterial({
+    color: 0xaabbcc,
+    size: 0.3,
+    transparent: true,
+    opacity: 0.4,
+    sizeAttenuation: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+});
+const dustParticles = new THREE.Points(dustGeometry, dustMaterial);
+scene.add(dustParticles);
+
+const asteroidBeltCount = 2000;
+const asteroidGeometry = new THREE.BufferGeometry();
+const asteroidPositions = new Float32Array(asteroidBeltCount * 3);
+for (let i = 0; i < asteroidBeltCount; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const r = 130 + Math.random() * 15;
+    asteroidPositions[i * 3] = Math.cos(angle) * r;
+    asteroidPositions[i * 3 + 1] = (Math.random() - 0.5) * 5;
+    asteroidPositions[i * 3 + 2] = Math.sin(angle) * r * -1;
+}
+asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPositions, 3));
+const asteroidMaterial = new THREE.PointsMaterial({
+    color: 0x888888,
+    size: 0.4,
+    transparent: true,
+    opacity: 0.5,
+    sizeAttenuation: true
+});
+const asteroidBelt = new THREE.Points(asteroidGeometry, asteroidMaterial);
+scene.add(asteroidBelt);
+
 var frame = 0;
 
-// 1 second = 1 day
-function getRotation (frame, period) {
-    // takes period rate in days/rotation
-    // 1 second = 7 days
-    let rotation = frame / 3600 / period * 2 * 3.141592653589793238;
-    return(rotation);
+function getRotation(frame, period) {
+    let rotation = frame / 3600 / period * 2 * Math.PI;
+    return rotation;
 }
 
-// orbital radius = 117.30053 * AU
-// orbital radius = miles / 792457.552583
-// 1 second = 1 day
-function orbitalPosition (frame, orbitperiod, parent, radius) {
-    // get time in seconds
+function orbitalPosition(frame, orbitperiod, parent, radius) {
     let time = frame / 60;
-
-    // how many orbital periods have passed?
     let periodratio = time / orbitperiod;
-
-    // adjust for pi radians
-    let piadjusted = periodratio * 2 * 3.141592653589793238;
-
-    // Calculate x, z coordinates
-    let posx = Math.cos(piadjusted);
-    let posz = Math.sin(piadjusted);
-    posx *= radius;
-    posz *= radius * -1;
-
-    // Adjust to parent coordinates
+    let piadjusted = periodratio * 2 * Math.PI;
+    let posx = Math.cos(piadjusted) * radius;
+    let posz = Math.sin(piadjusted) * radius * -1;
     posx += parent.position.x;
     posz += parent.position.z;
-    return([posx, posz]);
+    return [posx, posz];
 }
 
-function cameraOffset (position, radius, leftright) {
-    let magnitude = Math.sqrt(Math.pow(position.x, 2) + Math.pow(position.z, 2));
+function cameraOffset(position, radius) {
+    const distance = Math.max(radius * 4, 8);
+    const height = radius * 1.5 + 3;
 
-
-    let unitvector = {
-        x: position.x / magnitude,
-        y: 0,
-        z: position.z / magnitude
+    const magnitude = Math.sqrt(position.x * position.x + position.z * position.z);
+    if (magnitude < 0.001) {
+        return { x: distance, y: height, z: distance };
     }
 
-    let offset = {
-        x: position.x + unitvector.x * radius * 2,
-        y: 0,
-        z: position.z + unitvector.z * radius * 2
-    }
-    offset.x += unitvector.z;
-    offset.z += unitvector.x;
+    const radialX = position.x / magnitude;
+    const radialZ = position.z / magnitude;
 
-    return(offset);
+    const perpX = -radialZ;
+    const perpZ = radialX;
+
+    const angle = 0.5;
+    const offsetDistance = distance;
+
+    return {
+        x: position.x + (radialX * Math.cos(angle) + perpX * Math.sin(angle)) * offsetDistance,
+        y: height,
+        z: position.z + (radialZ * Math.cos(angle) + perpZ * Math.sin(angle)) * offsetDistance
+    };
 }
 
-// Use Three.js curves for easing and camera pathing
 function easeCubicBezier(progress) {
-    // Easing curve in 2D; we take the x component as the eased value
-    // Control points replicate your original curve: (0,0)->(0,100)->(1,100)->(1,0)
     const curve = new THREE.CubicBezierCurve(
         new THREE.Vector2(0, 0),
-        new THREE.Vector2(0, 100),
-        new THREE.Vector2(1, 100),
-        new THREE.Vector2(1, 0)
+        new THREE.Vector2(0.25, 0.1),
+        new THREE.Vector2(0.25, 1),
+        new THREE.Vector2(1, 1)
     );
-    return curve.getPoint(THREE.MathUtils.clamp(progress, 0, 1)).x;
+    return curve.getPoint(THREE.MathUtils.clamp(progress, 0, 1)).y;
 }
 
 function bezierTransition(start, end, progress) {
-    // Quadratic Bézier in 3D for the camera path between two points
-    // Control point lifted in Y by horizontal distance, just like before
     const a = new THREE.Vector3(start.x, start.y, start.z);
     const c = new THREE.Vector3(end.x, end.y, end.z);
     const midX = (start.x + end.x) / 2;
     const midZ = (start.z + end.z) / 2;
-    const liftY = Math.hypot(end.x - start.x, end.z - start.z);
+    const liftY = Math.max(Math.hypot(end.x - start.x, end.z - start.z) * 0.3, 10);
     const b = new THREE.Vector3(midX, liftY, midZ);
     const curve = new THREE.QuadraticBezierCurve3(a, b, c);
     const p = curve.getPoint(THREE.MathUtils.clamp(progress, 0, 1));
     return { x: p.x, y: p.y, z: p.z };
 }
 
-function moveCamera () {
-    //get how far down the user has scrolled
-    let position = document.body.getBoundingClientRect().top * -1;
-
-    //get positions of planet descriptions relative to document body
-    let hermes = {
-        top: 1 * (document.querySelector("#mercury").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
-        bottom: document.querySelector("#mercury").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
-    }
-    let aphrodite = {
-        top: 1 * (document.querySelector("#venus").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
-        bottom: document.querySelector("#venus").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
+function getSectionBounds(id) {
+    const el = document.querySelector(`#${id}`);
+    if (!el) return { top: 0, bottom: 0 };
+    const bodyTop = document.body.getBoundingClientRect().top;
+    return {
+        top: el.getBoundingClientRect().top - bodyTop - 600,
+        bottom: el.getBoundingClientRect().bottom - bodyTop
     };
-    let gaia = {
-        top: 1 * (document.querySelector("#earth").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
-        bottom: document.querySelector("#earth").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
-    };
-    let ares = {
-        top: 1 * (document.querySelector("#mars").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
-        bottom: document.querySelector("#mars").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
-    };
-    let zeus = {
-        top: 1 * (document.querySelector("#jupiter").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
-        bottom: document.querySelector("#jupiter").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
-    };
-    let cronus = {
-        top: 1 * (document.querySelector("#saturn").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
-        bottom: document.querySelector("#saturn").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
-    };
-    let caelus = {
-        top: 1 * (document.querySelector("#uranus").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
-        bottom: document.querySelector("#uranus").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
-    };
-    let poseidon = {
-        top: 1 * (document.querySelector("#neptune").getBoundingClientRect().top - document.body.getBoundingClientRect().top) - 600,
-        bottom: document.querySelector("#neptune").getBoundingClientRect().bottom - document.body.getBoundingClientRect().top
-    };
-    let demeter = document.querySelector("#ceres").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let discordia = document.querySelector("#eris").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-    let hades = document.querySelector("#pluto").getBoundingClientRect().top - document.body.getBoundingClientRect().top;
-
-    let oldprogress = 0;
-    let progress = 0
-
-    if(position < hermes.top) {
-        // figure out how far between two planet descriptions the user is (scaled to between 0 and 1)
-        oldprogress = 1 - (hermes.top - position) / hermes.top;
-        progress = easeCubicBezier (oldprogress);
-
-        // set camera position
-        let camerapos = bezierTransition({x: 60, y: 20, z: 60}, cameraOffset(mercury.position, 0.39615, 1), progress);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < hermes.bottom) {
-        let camerapos = cameraOffset(mercury.position, 0.39615, 1);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < aphrodite.top) {
-        oldprogress = 1 - (aphrodite.top - position) / (aphrodite.top - hermes.bottom);
-        progress = easeCubicBezier (oldprogress);
-
-        let camerapos = bezierTransition(cameraOffset(mercury.position, 0.39615, 1), cameraOffset(venus.position, 0.94985, 1), progress);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < aphrodite.bottom) {
-        let camerapos = cameraOffset(venus.position, 0.94985, 1);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < gaia.top) {
-        oldprogress = 1 - (gaia.top - position) / (gaia.top - aphrodite.bottom);
-        progress = easeCubicBezier (oldprogress);
-
-        let camerapos = bezierTransition(cameraOffset(venus.position, 0.94985, 1), cameraOffset(earth.position, 1, 1), progress);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < gaia.bottom) {
-        let camerapos = cameraOffset(earth.position, 1, 1);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < ares.top) {
-        oldprogress = 1 - (ares.top - position) / (ares.top - gaia.bottom);
-        progress = easeCubicBezier (oldprogress);
-
-        let camerapos = bezierTransition(cameraOffset(earth.position, 1, 1), cameraOffset(mars.position, 0.53242, 1), progress);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < ares.bottom) {
-        let camerapos = cameraOffset(mars.position, 0.53242, 1)
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < zeus.top) {
-        oldprogress = 1 - (zeus.top - position) / (zeus.top - ares.bottom);
-        progress = easeCubicBezier (oldprogress)
-
-        let camerapos = bezierTransition(cameraOffset(mars.position, 0.53242, 1), cameraOffset(jupiter.position, 11.3517, 1), progress);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < zeus.bottom) {
-        let camerapos = cameraOffset(jupiter.position, 11.3517, 1)
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < cronus.top) {
-        oldprogress = 1 - (cronus.top - position) / (cronus.top - zeus.bottom);
-        progress = easeCubicBezier (oldprogress)
-
-        let camerapos = bezierTransition(cameraOffset(jupiter.position, 11.3517, 1), cameraOffset(saturn.position, 9.1402, 1), progress);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < cronus.bottom) {
-        let camerapos = cameraOffset(saturn.position, 9.1402, 1)
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < caelus.top) {
-        oldprogress = 1 - (caelus.top - position) / (caelus.top - cronus.bottom);
-        progress = easeCubicBezier (oldprogress)
-
-        let camerapos = bezierTransition(cameraOffset(saturn.position, 9.1402, 1), cameraOffset(uranus.position, 3.97648, 1), progress);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < caelus.bottom) {
-        let camerapos = cameraOffset(uranus.position, 3.97648, 1)
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < poseidon.top) {
-        oldprogress = 1 - (poseidon.top - position) / (poseidon.top - caelus.bottom);
-        progress = easeCubicBezier (oldprogress)
-
-        let camerapos = bezierTransition(cameraOffset(uranus.position, 3.97648, 1), cameraOffset(neptune.position, 3.86046, 1), progress);
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    } else if (position < poseidon.bottom) {
-        let camerapos = cameraOffset(neptune.position, 3.86046, 1)
-
-        camera.position.setX(camerapos.x);
-        camera.position.setY(camerapos.y);
-        camera.position.setZ(camerapos.z);
-    }
-
-    camera.lookAt(new THREE.Vector3(0, 0, 0))
 }
 
-function animate () {
+let currentFocusIndex = -1;
+let targetCameraPos = { x: 60, y: 20, z: 60 };
+let currentCameraPos = { x: 60, y: 20, z: 60 };
+let targetLookAt = new THREE.Vector3(0, 0, 0);
+let currentLookAt = new THREE.Vector3(0, 0, 0);
+
+function moveCamera() {
+    const position = document.body.getBoundingClientRect().top * -1;
+
+    const sections = [
+        { id: 'mercury', planet: mercury },
+        { id: 'venus', planet: venus },
+        { id: 'earth', planet: earth },
+        { id: 'mars', planet: mars },
+        { id: 'jupiter', planet: jupiter },
+        { id: 'saturn', planet: saturn },
+        { id: 'uranus', planet: uranus },
+        { id: 'neptune', planet: neptune },
+        { id: 'pluto', planet: pluto }
+    ];
+
+    const bounds = sections.map(s => ({ ...getSectionBounds(s.id), planet: s.planet }));
+
+    let newFocusIndex = -1;
+    let newTargetPos = { x: 60, y: 20, z: 60 };
+    let newLookAt = new THREE.Vector3(0, 0, 0);
+
+    if (position < bounds[0].top) {
+        const progress = easeCubicBezier(1 - (bounds[0].top - position) / bounds[0].top);
+        const startPos = { x: 60, y: 20, z: 60 };
+        const endPos = cameraOffset(bounds[0].planet.mesh.position, bounds[0].planet.radius);
+        newTargetPos = bezierTransition(startPos, endPos, progress);
+        newLookAt.set(0, 0, 0);
+    } else {
+        for (let i = 0; i < bounds.length; i++) {
+            if (position >= bounds[i].top && position < bounds[i].bottom) {
+                newFocusIndex = i;
+                newTargetPos = cameraOffset(bounds[i].planet.mesh.position, bounds[i].planet.radius);
+                newLookAt.copy(bounds[i].planet.mesh.position);
+                break;
+            } else if (i < bounds.length - 1 && position >= bounds[i].bottom && position < bounds[i + 1].top) {
+                const progress = easeCubicBezier(
+                    1 - (bounds[i + 1].top - position) / (bounds[i + 1].top - bounds[i].bottom)
+                );
+                const startPos = cameraOffset(bounds[i].planet.mesh.position, bounds[i].planet.radius);
+                const endPos = cameraOffset(bounds[i + 1].planet.mesh.position, bounds[i + 1].planet.radius);
+                newTargetPos = bezierTransition(startPos, endPos, progress);
+                const midLookAt = new THREE.Vector3().lerpVectors(
+                    bounds[i].planet.mesh.position,
+                    bounds[i + 1].planet.mesh.position,
+                    progress
+                );
+                newLookAt.copy(midLookAt);
+                break;
+            }
+        }
+    }
+
+    if (newFocusIndex === -1 && position >= bounds[bounds.length - 1].bottom) {
+        const lastPlanet = bounds[bounds.length - 1].planet;
+        newTargetPos = cameraOffset(lastPlanet.mesh.position, lastPlanet.radius);
+        newLookAt.copy(lastPlanet.mesh.position);
+    }
+
+    const smoothing = 0.05;
+    currentCameraPos.x += (newTargetPos.x - currentCameraPos.x) * smoothing;
+    currentCameraPos.y += (newTargetPos.y - currentCameraPos.y) * smoothing;
+    currentCameraPos.z += (newTargetPos.z - currentCameraPos.z) * smoothing;
+
+    currentLookAt.lerp(newLookAt, smoothing);
+
+    camera.position.set(currentCameraPos.x, currentCameraPos.y, currentCameraPos.z);
+    camera.lookAt(currentLookAt);
+}
+
+function animate() {
     requestAnimationFrame(animate);
 
     sun.rotation.y = getRotation(frame, 27);
+    const pulse = 1 + Math.sin(frame * 0.02) * 0.02;
+    sunglow.scale.set(pulse, pulse, pulse);
 
-    mercury.position.x = orbitalPosition(frame, 87.97, sun, 40)[0];
-    mercury.rotation.y = getRotation(frame, 59);
-    mercury.position.z = orbitalPosition(frame, 87.97, sun, 40)[1];
+    planets.forEach(p => {
+        const pos = orbitalPosition(frame, p.orbitPeriod, sun, p.orbitRadius);
+        p.mesh.position.x = pos[0];
+        p.mesh.position.z = pos[1];
+        p.mesh.rotation.y = getRotation(frame, p.rotationPeriod);
+    });
 
-    venus.position.x = orbitalPosition(frame, 583.92, sun, 60)[0];
-    venus.rotation.y = getRotation(frame, -116.75);
-    venus.position.z = orbitalPosition(frame, 583.92, sun, 60)[1];
+    saturnRing.position.copy(saturn.mesh.position);
+    uranusRing.position.copy(uranus.mesh.position);
 
-    earth.position.x = orbitalPosition(frame, 365.249, sun, 90)[0];
-    earth.rotation.y = getRotation(frame, 1);
-    earth.position.z = orbitalPosition(frame, 365.249, sun, 90)[1];
+    asteroidBelt.rotation.y = frame * 0.00002;
 
-    mars.position.x = orbitalPosition(frame, 686.98, sun, 120)[0];
-    mars.rotation.y = getRotation(frame, 1.025957);
-    mars.position.z = orbitalPosition(frame, 686.98, sun, 120)[1];
-
-    jupiter.position.x = orbitalPosition(frame, 398.88, sun, 150)[0];
-    jupiter.rotation.y = getRotation(frame, 4332.583638);
-    jupiter.position.z = orbitalPosition(frame, 398.88, sun, 150)[1];
-
-    saturn.position.x = orbitalPosition(frame, 10759.22, sun, 180)[0];
-    saturn.rotation.y = getRotation(frame, 0.44002);
-    saturn.position.z = orbitalPosition(frame, 10759.22, sun, 180)[1];
-
-    uranus.position.x = orbitalPosition(frame, 30688, sun, 210)[0];
-    uranus.rotation.y = getRotation(frame, 0.71833);
-    uranus.position.z = orbitalPosition(frame, 30688, sun, 210)[1];
-
-    neptune.position.x = orbitalPosition(frame, 60195, sun, 240)[0];
-    neptune.rotation.y = getRotation(frame, 0.6713);
-    neptune.position.z = orbitalPosition(frame, 60195, sun, 240)[1];
-
-    pluto.position.x = orbitalPosition(frame, 90560, sun, 270)[0];
-    pluto.rotation.y = getRotation(frame, -6.387230);
-    pluto.position.z = orbitalPosition(frame, 90560, sun, 270)[1];
-
-    renderer.render(scene, camera);
-    
-    frame++
-
+    composer.render();
+    frame++;
     moveCamera();
 }
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth, window.innerHeight);
+    bloomPass.resolution.set(window.innerWidth, window.innerHeight);
+});
 
 animate();
