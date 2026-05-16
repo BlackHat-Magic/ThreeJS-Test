@@ -10,14 +10,14 @@
 <link
     rel="icon"
     type="image/png"
-    href="{{ url_for('static', filename='img/icon.png') }}"
+    href="/static/img/icon.png"
 />
-<title>{{ title }} | Three.js test</title>
+<title>Home | Three.js test</title>
 
 <!-- Tailwind v4 compiled CSS -->
 <link
     rel="stylesheet"
-    href="{{ url_for('static', filename='dist/main.css') }}"
+    href="/static/dist/main.css"
 />
 
 <!-- Three.js entry -->
@@ -32,7 +32,7 @@
 </script>
 <script
     type="module"
-    src="{{ url_for('static', filename='js/index.js') }}"
+    src="/static/js/index.js"
     defer
 ></script>
 </head>
