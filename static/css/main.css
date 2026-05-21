@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Tell Tailwind where your source files are (v4). This makes detection work well with Flask/Jinja. */
-@import "tailwindcss" source("../../templates");
+@import "tailwindcss" source("../");
 
 /* Nord-like theme tokens mapped to Tailwind color names you can use like bg-canvas, text-text, etc. */
 @theme {

@@ -11,75 +11,75 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.render(scene, camera);
 
-const skyboxtexture = new THREE.TextureLoader().load('/static/img/8k_stars.jpg');
+const skyboxtexture = new THREE.TextureLoader().load('/img/8k_stars.jpg');
 scene.background = skyboxtexture;
 
 // PRAISE THE SUN \[T]/
 const sungeometry = new THREE.SphereGeometry(22.70340, 64, 32)
-const suntexture = new THREE.TextureLoader().load("/static/img/2k_sun.jpg")
+const suntexture = new THREE.TextureLoader().load("/img/2k_sun.jpg")
 const sunmaterial = new THREE.MeshBasicMaterial({map: suntexture})
 const sun = new THREE.Mesh(sungeometry, sunmaterial)
 scene.add(sun);
 
 // Hermes
 const mercurygeometry = new THREE.SphereGeometry(0.39615, 32, 16);
-const mercurytexture = new THREE.TextureLoader().load("/static/img/2k_mercury.jpg");
+const mercurytexture = new THREE.TextureLoader().load("/img/2k_mercury.jpg");
 const mercurymaterial = new THREE.MeshStandardMaterial({map: mercurytexture});
 const mercury = new THREE.Mesh(mercurygeometry, mercurymaterial);
 scene.add(mercury);
 
 // Aphrodite
 const venusgeometry = new THREE.SphereGeometry(0.94985, 32, 16);
-const venustexture = new THREE.TextureLoader().load("/static/img/2.5k_venus.jpg");
+const venustexture = new THREE.TextureLoader().load("/img/2.5k_venus.jpg");
 const venusmaterial = new THREE.MeshStandardMaterial({map:venustexture});
 const venus = new THREE.Mesh(venusgeometry, venusmaterial);
 scene.add(venus);
 
 // Gaia
 const earthgeometry = new THREE.SphereGeometry(1, 32, 16);
-const earthtexture = new THREE.TextureLoader().load("/static/img/2.5k_earth.jpg");
+const earthtexture = new THREE.TextureLoader().load("/img/2.5k_earth.jpg");
 const earthmaterial = new THREE.MeshStandardMaterial({map:earthtexture});
 const earth = new THREE.Mesh(earthgeometry, earthmaterial);
 scene.add(earth);
 
 // ares
 const marsgeometry = new THREE.SphereGeometry(0.53242, 32, 16);
-const marstexture = new THREE.TextureLoader().load("/static/img/2.5k_mars.jpg");
+const marstexture = new THREE.TextureLoader().load("/img/2.5k_mars.jpg");
 const marsmaterial = new THREE.MeshStandardMaterial({map:marstexture});
 const mars = new THREE.Mesh(marsgeometry, marsmaterial);
 scene.add(mars);
 
 // zeus
 const jupitergeometry = new THREE.SphereGeometry(11.3517, 32, 16);
-const jupitertexture = new THREE.TextureLoader().load("/static/img/2.5k_jupiter.jpg");
+const jupitertexture = new THREE.TextureLoader().load("/img/2.5k_jupiter.jpg");
 const jupitermaterial = new THREE.MeshStandardMaterial({map:jupitertexture});
 const jupiter = new THREE.Mesh(jupitergeometry, jupitermaterial);
 scene.add(jupiter);
 
 // Cronus
 const saturngeometry = new THREE.SphereGeometry(9.1402, 32, 16);
-const saturntexture = new THREE.TextureLoader().load("/static/img/2.5k_saturn.jpg");
+const saturntexture = new THREE.TextureLoader().load("/img/2.5k_saturn.jpg");
 const saturnmaterial = new THREE.MeshStandardMaterial({map:saturntexture});
 const saturn = new THREE.Mesh(saturngeometry, saturnmaterial);
 scene.add(saturn);
 
 // Caelus
 const uranusgeometry = new THREE.SphereGeometry(3.97648, 32, 16);
-const uranustexture = new THREE.TextureLoader().load("/static/img/2k_uranus.jpg");
+const uranustexture = new THREE.TextureLoader().load("/img/2k_uranus.jpg");
 const uranusmaterial = new THREE.MeshStandardMaterial({map:uranustexture});
 const uranus = new THREE.Mesh(uranusgeometry, uranusmaterial);
 scene.add(uranus);
 
 // Poseidon
 const neptunegeometry = new THREE.SphereGeometry(3.86046, 32, 16);
-const neptunetexture = new THREE.TextureLoader().load("/static/img/2k_neptune.jpg");
+const neptunetexture = new THREE.TextureLoader().load("/img/2k_neptune.jpg");
 const neptunematerial = new THREE.MeshStandardMaterial({map:neptunetexture});
 const neptune = new THREE.Mesh(neptunegeometry, neptunematerial);
 scene.add(neptune);
 
 // Hades
 const plutogeometry = new THREE.SphereGeometry(0.1868, 32, 16);
-const plutotexture = new THREE.TextureLoader().load("/static/img/pluto.webp");
+const plutotexture = new THREE.TextureLoader().load("/img/pluto.webp");
 const plutomaterial = new THREE.MeshStandardMaterial({map:plutotexture});
 const pluto = new THREE.Mesh(plutogeometry, plutomaterial);
 scene.add(pluto);
